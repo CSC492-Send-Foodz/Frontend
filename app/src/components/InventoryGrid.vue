@@ -2,7 +2,7 @@
   <div>
     <button @click="addInventoryItem(item)">+</button>
     <div v-for="(item, index) in getAllInventoryItems" :key="index">
-            <InventoryItem :index=index></InventoryItem>
+      <InventoryItem :index="index"></InventoryItem>
     </div>
   </div>
 </template>
@@ -27,17 +27,13 @@ export default {
     };
   },
   computed: {
-    ...mapGetters([
-      "getAllInventoryItems",
-      "getInventoryCount"
-    ])
+    ...mapGetters(["getAllInventoryItems", "getInventoryCount"])
   },
   methods: {
     ...mapMutations(["addInventoryItem"])
+  },
+  components: {
+    InventoryItem
   }
-    ,
-    components: {
-      InventoryItem
-    }
 };
 </script>
