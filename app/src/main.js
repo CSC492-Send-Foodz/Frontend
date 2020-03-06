@@ -19,7 +19,7 @@ Vue.config.productionTip = false
 Vue.use(Vuex)
 Vue.use(vuetify)
 
-// Vue.use(VueAxios, axios, Vuex, BootstrapVue, IconsPlugin, Vuetify)
+// Vue.use(VueAxios, axios, Vuex, BootstrapVue, IconsPlugin)
 
 new Vue({
   router,
