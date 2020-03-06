@@ -1,15 +1,25 @@
 <template>
   <div id="app">
-    <Form/>
+    <!-- <Form/> -->
+        <div class="container">
+      <div class="row">
+        <div class="col-md-6 offset-md-3">
+          <Chat />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import Form from './components/Form.vue'
+//import Form from './components/Form.vue'
+import Chat from './components/Chat.vue'
+
 export default {
   name: 'App',
   components: {
-    Form
+    //Form,
+    Chat
   }
 }
 </script>
