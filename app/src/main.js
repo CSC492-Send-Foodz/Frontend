@@ -16,14 +16,6 @@ Vue.config.productionTip = false
 Vue.use(VueAxios, axios, Vuex, VueRouter, BootstrapVue, vuetify)
 
 new Vue({
-  render: h => h(App),
-}).$mount('#app')
-
-Vue.config.productionTip = false
-
-Vue.use(BootstrapVue, vuetify);
-
-new Vue({
   vuetify,
   render: h => h(App)
 }).$mount('#app')
