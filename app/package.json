@@ -18,7 +18,7 @@
     "vue-axios": "^2.1.5",
     "vue-router": "^3.1.6",
     "vuetify": "^2.2.15",
-    "vuex": "^3.1.2"
+    "vuex": "^3.1.2",
     "webpack": "^4.42.0"
   },
   "devDependencies": {
@@ -47,6 +47,6 @@
     "test": "tests"
   },
   "author": "",
-  "license": "ISC"
-    "vue-cli-plugin-bootstrap-vue": "^0.6.0",
+  "license": "ISC",
+  "vue-cli-plugin-bootstrap-vue": "^0.6.0"
 }

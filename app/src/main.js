@@ -12,8 +12,6 @@ import '../node_modules/bootstrap-vue/dist/bootstrap-vue.css'
 import '../node_modules/bulma/css/bulma.css'
 import vuetify from './plugins/vuetify'
 
-Vue.config.productionTip = falsew
-
 Vue.config.productionTip = false
 
 Vue.use(VueAxios)
@@ -22,8 +20,6 @@ Vue.use(Vuex)
 Vue.use(VueRouter)
 Vue.use(BootstrapVue)
 Vue.use(vuetify)
-
-// Vue.use(VueAxios, axios, Vuex, BootstrapVue, IconsPlugin)
 
 new Vue({
   router,

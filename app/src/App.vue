@@ -45,12 +45,14 @@
 
     <v-content>
       <router-view />
+      <ActiveOrders />
     </v-content>
   </v-app>
 </template>
 
 <script>
 import store from "../store/index.js";
+
 export default {
   name: "App",
   store,
