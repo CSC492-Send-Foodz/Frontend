@@ -13,7 +13,12 @@ import vuetify from './plugins/vuetify'
 
 Vue.config.productionTip = false
 
-Vue.use(VueAxios, axios, Vuex, VueRouter, BootstrapVue, vuetify)
+Vue.use(VueAxios)
+Vue.use(axios)
+Vue.use(Vuex)
+Vue.use(VueRouter)
+Vue.use(BootstrapVue)
+Vue.use(vuetify)
 
 new Vue({
   vuetify,
