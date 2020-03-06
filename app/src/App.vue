@@ -1,17 +1,16 @@
 <template>
   <div id="app">
-    <InventoryGrid/>
+   <router-view/>
   </div>
 </template>
 
 <script>
-import InventoryGrid from './components/InventoryGrid.vue'
+import store from '../store/index.js'
+
 
 export default {
   name: 'App',
-  components: {
-    InventoryGrid
-  }
+  store
 }
 </script>
 
