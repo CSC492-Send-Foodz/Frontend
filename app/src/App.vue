@@ -1,5 +1,4 @@
 <template>
-<<<<<<< HEAD
   <v-app>
     <v-navigation-drawer v-model="sidebar"  disable-resize-watcher = true app>
       <v-list>
@@ -71,21 +70,6 @@ export default {
     };
   }
 };
-=======
-  <div id="app">
-   <router-view/>
-  </div>
-</template>
-
-<script>
-import store from '../store/index.js'
-
-
-export default {
-  name: 'App',
-  store
-}
->>>>>>> 7fc2d6fa5b1871a5e8524f66a72b1b50acfbbc0d
 </script>
 
 <style>
