@@ -6,48 +6,28 @@ Vue.use(Vuex)
 export default new Vuex.Store({
 	state: {
 		id: null,
-		inventoryItems: [
-			{
-				id: 1,
-				name: "apple",
-				brand: "sun",
-				groceryStoreId: 8054,
-				quantity: 15,
-				expirationDate: "now",
-				ediOrderNumber: "abc123"
-			}, {
-				id: 1,
-				name: "apple",
-				brand: "sun",
-				groceryStoreId: 8054,
-				quantity: 15,
-				expirationDate: "now",
-				ediOrderNumber: "abc123"
-			}
-			, {
-				id: 1,
-				name: "orange",
-				brand: "sun",
-				groceryStoreId: 8054,
-				quantity: 15,
-				expirationDate: "now",
-				ediOrderNumber: "abc123"
-			},
-			{
-				id: 1,
-				name: "apple",
-				brand: "sun",
-				groceryStoreId: 8054,
-				quantity: 15,
-				expirationDate: "now",
-				ediOrderNumber: "abc123"
-			}
-
-		]
+		inventoryItems: []
 	},
+
+	getters: {
+		getAllInventoryItems: (state) => {
+			return state.inventoryItems
+		},
+
+		getInventoryCount: (state, getters) => {
+			
+			return getters.getAllInventoryItems.length
+		},
+
+		getInventoryItem: (state) => (index) => {
+			return state.inventoryItems[index]
+		}
+	},
+
 	mutations: {
-		addInventoryItems(state, items) {
-			state.inventoryItems.push(items)
+		addInventoryItem (state, item) {
+			state.inventoryItems.push(item)
 		}
 	}
+	
 })
