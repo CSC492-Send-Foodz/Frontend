@@ -8,9 +8,9 @@ import VueAxios from 'vue-axios'
 import { BootstrapVue } from 'bootstrap-vue';
 
 import '../node_modules/bootstrap/dist/css/bootstrap.css'
-import '../node_modules/bootstrap-vue/dist/bootstrap-vue.css'
+import BootstrapVue from '../node_modules/bootstrap-vue/dist/bootstrap-vue.css'
 import '../node_modules/bulma/css/bulma.css'
-import vuetify from './plugins/vuetify'
+import Vuetify from 'vuetify'
 
 Vue.config.productionTip = false
 
