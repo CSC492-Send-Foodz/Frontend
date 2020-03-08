@@ -1,34 +1,34 @@
 <template>
   <div>
-    <b-table :sticky-header="true" :items="activeOrders" :fields="fields">
-      <template v-slot:cell(response)="row">
-        <b-button id="response" @click="changeStatus(row.index)">
-          <v-icon>mdi-check</v-icon>
-        </b-button>
-        <b-button
-          id="response"
-          :disabled="shouldDisable(row.index)"
-          @click="removeOrder(row.index)"
-        >
-          <v-icon>mdi-close</v-icon>
-        </b-button>
+    <v-data-table
+      :headers="fields"
+      :items="activeOrders"
+      class="elevation-1"
+      hide
+      actions
+    >
+      <template v-slot:item="row">
+        <tr>
+          <td>{{ row.item.EDINumber }}</td>
+          <td>{{ row.item.foodBank }}</td>
+          <td>{{ row.item.time }}</td>
+          <td>{{ row.item.orderStatus }}</td>
+          <td>
+            <v-btn icon id="response" @click="changeStatus(row.index)">
+              <v-icon>mdi-check</v-icon>
+            </v-btn>
+            <v-btn
+              icon
+              id="response"
+              :disabled="shouldDisable(row.index)"
+              @click="removeOrder(row.index)"
+            >
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </td>
+        </tr>
       </template>
-      <template v-slot:cell(expand)="row">
-        <b-button id="expand" size="sm" @click="row.toggleDetails" class="mr-2">
-          <v-icon>{{
-            row.detailsShowing ? "mdi-chevron-up" : "mdi-chevron-down"
-          }}</v-icon>
-        </b-button>
-      </template>
-
-      <template v-slot:row-details="row">
-        <b-card>
-          <b-row v-for="item in row.item.items" :key="item"
-            >{{ item.name }} : {{ item.qty }}</b-row
-          >
-        </b-card>
-      </template>
-    </b-table>
+    </v-data-table>
   </div>
 </template>
 <script>
@@ -60,12 +60,11 @@ export default {
         }
       ],
       fields: [
-        "EDINumber",
-        "foodBank",
-        "time",
-        "orderStatus",
-        "response",
-        "expand"
+        { text: "EDI Number", value: "EDINumber" },
+        { text: "Food Bank", value: "foodBank" },
+        { text: "Time", value: "time" },
+        { text: "Order Status", value: "orderStatus" },
+        { text: "", value: "response" }
       ]
     };
   },
@@ -81,7 +80,14 @@ export default {
         return true;
       }
       return false;
+    },
+    getInventory() {
+
+    },
+    sendStatus() {
+
     }
+
   }
 };
 </script>
@@ -91,5 +97,6 @@ export default {
   background-color: white;
   color: #333;
   border: none;
+  outline: none;
 }
 </style>
