@@ -1,10 +1,12 @@
 <template>
-  <div @load="sendStoreId">
+  <div>
+    <v-btn @click="getInventory">Get Data</v-btn>
     <v-data-table
       :headers="fields"
       :items="activeOrders"
       class="elevation-1"
-      hide actions
+      hide
+      actions
       :hide-default-footer="true"
     >
       <template v-slot:item="row">
@@ -32,32 +34,16 @@
   </div>
 </template>
 <script>
-import io from 'socket.io-client';
+import io from "socket.io-client";
 
 export default {
+  mounted() {
+      this.sendStoreId();
+    },
   data() {
     return {
-      socket : io('localhost:3001'),
-      activeOrders: [
-        {
-          EDINumber: 3232,
-          foodBank: "Eden",
-          time: Date(),
-          orderStatus: "Searching for Driver",
-          items: [
-            {name: "apple", qty: 45}
-          ]
-        },
-        {
-          EDINumber: 4671,
-          foodBank: "Seva",
-          time: Date(),
-          orderStatus: "Picked up",
-          items: [
-            {name: "pineapple", qty: 1000}
-          ]
-        }
-      ],
+      socket: io("localhost:3001"),
+      activeOrders: [],
       fields: [
         { text: "EDI Number", value: "EDINumber" },
         { text: "Food Bank", value: "foodBank" },
@@ -81,18 +67,22 @@ export default {
       return false;
     },
     getInventory() {
+      console.log("getting invent")
       this.activeOrders = [];
       this.socket.on("INVENTORY_DATA", items => {
-        items.forEach(item => {
-          this.activeOrders.push(item);
-        });
+        console.log(items);
+      //   items.forEach(item => {
+      //     this.activeOrders.push(item);
+      //     console.log(item);
+      //   });
       });
     },
-    sendStoreId(event) {
-      event.preventDefault();
+    sendStoreId() {
+      //event.preventDefault();
       // send storeID to back end to get inventory
+      console.log("sending")
       this.socket.emit("STORE_ID", {
-        param: this.$store.state.id
+        param: "6773"
       });
     }
   }
