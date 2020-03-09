@@ -1,14 +1,12 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import PapaParse from "papaparse";
-
 import axios from 'axios'
-import VueAxios from 'vue-axios'
 import { vuexfireMutations, firestoreAction } from 'vuexfire'
 import db from "../src/plugins/database"
 
 
-Vue.use(Vuex, VueAxios, axios, vuexfireMutations)
+Vue.use(Vuex, axios, vuexfireMutations)
 
 export default new Vuex.Store({
 
