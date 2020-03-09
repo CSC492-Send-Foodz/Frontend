@@ -12,14 +12,14 @@ import'../node_modules/bootstrap-vue/dist/bootstrap-vue.css'
 import '../node_modules/bulma/css/bulma.css'
 import vuetify from './plugins/vuetify'
 
+import App from './App.vue'
+
+
 Vue.config.productionTip = false
 
 Vue.use(VueAxios)
 Vue.use(axios)
 Vue.use(Vuex)
-Vue.use(VueRouter)
-Vue.use(BootstrapVue)
-Vue.use(vuetify)
 
 new Vue({
   router,

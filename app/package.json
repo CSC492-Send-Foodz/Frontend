@@ -10,22 +10,16 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
-    "bootstrap": "^4.4.1",
-    "bootstrap-vue": "^2.5.0",
     "bulma": "^0.8.0",
     "core-js": "^3.6.4",
-    "express": "^4.17.1",
-    "jquery": "^3.4.1",
-    "socket.io": "^2.3.0",
-    "socket.io-client": "^2.3.0",
-    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v17.3.0",
-    "uws": "^10.148.1",
+    "firebase": "^7.10.0",
+    "moment": "^2.24.0",
+    "papaparse": "^5.1.1",
     "vue": "^2.6.11",
-    "vue-axios": "^2.1.5",
     "vue-router": "^3.1.6",
     "vuetify": "^2.2.15",
     "vuex": "^3.1.2",
-    "webpack": "^4.42.0"
+    "vuexfire": "^3.2.1"
   },
   "devDependencies": {
     "@babel/polyfill": "^7.7.0",
