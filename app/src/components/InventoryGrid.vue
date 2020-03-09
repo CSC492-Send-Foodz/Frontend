@@ -1,9 +1,12 @@
 <template>
   <div>
-    <button @click="addInventoryItem(item)">+</button>
-    <div v-for="(item, index) in getAllInventoryItems" :key="index">
-      <InventoryItem :index="index"></InventoryItem>
-    </div>
+    <v-container >
+      <v-row justify="center" class="mx-auto" max-width="600">
+        <v-card  v-for="(item, index) in getAllInventoryItems" :key="index" class="ma-2 pa-1">
+          <InventoryItem :index="index"></InventoryItem>
+        </v-card>
+      </v-row>
+    </v-container>
   </div>
 </template>
 

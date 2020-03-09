@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-navigation-drawer v-model="sidebar"  disable-resize-watcher = true app>
+    <v-navigation-drawer v-model="sidebar"  :disable-resize-watcher ="true" app>
       <v-list>
         <v-list-item v-for="item in menuItems" :key="item.title" :to="item.path">
           <v-list-item-action>
