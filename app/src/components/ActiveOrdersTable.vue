@@ -40,7 +40,7 @@
   </div>
 </template>
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   mounted() {
@@ -65,14 +65,18 @@ export default {
     ...mapGetters(["getActiveOrders"])
   },
   methods: {
+    ...mapActions({
+      postStatusUpdate: "postStatusUpdate";
+    }),
     changeStatus(index) {
-      this.activeOrders[index].orderStatus = "Picked up";
+      this.activeOrders[index].status = "Picked up";
+      this.postStatusUpdate(this.activeOrders[index].id);
     },
     removeOrder(index) {
       this.activeOrders.splice(index, 1);
     },
     shouldDisable(index) {
-      if (this.activeOrders[index].orderStatus == "Picked up") {
+      if (this.activeOrders[index].status == "Picked up") {
         return true;
       }
       return false;
