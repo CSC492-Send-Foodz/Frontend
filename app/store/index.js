@@ -12,7 +12,8 @@ export default new Vuex.Store({
 
 	state: {
 		id: null,
-		inventoryItems: []
+		inventoryItems: [],
+		activeOrders: []
 	},
 
 	getters: {
@@ -22,6 +23,10 @@ export default new Vuex.Store({
 
 		getInventoryItem: (state) => (index) => {
 			return state.inventoryItems[index]
+		},
+
+		getActiveOrders: (state) => {
+			return state.activeOrders
 		}
 	},
 
@@ -48,6 +53,19 @@ export default new Vuex.Store({
 			activeOrders.get().then((orders) => {
 				orders.forEach(order => {
 
+					let tmp = order.data();
+					if (tmp.groceryStoreId == "6773") {
+						foodBanks.doc(tmp.foodBankId).get().then(doc => {
+							let foodBank = doc.data();
+							tmp.foodBank = foodBank.name;
+							context.state.activeOrders.push(tmp);
+						})
+
+
+					}
+				});
+			})
+		},
 		postInventoryItems(context, uploadedInventoryFile) {
 			if (uploadedInventoryFile !== undefined) {
 				PapaParse.parse(uploadedInventoryFile, {

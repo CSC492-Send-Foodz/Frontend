@@ -40,7 +40,7 @@
   </div>
 </template>
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
   mounted() {
@@ -52,12 +52,12 @@ export default {
       singleExpand: false,
       activeOrders: [],
       fields: [
-        { text: "EDI Number", value: "id", align: 'center' },
-        { text: "Food Bank", value: "foodBankId", align: 'center' },
-        { text: "Time", value: "recieved", align: 'center' },
-        { text: "Order Status", value: "status", align: 'center' },
-        { text: "", value: "response", align: 'center' },
-        { text: "", value: "data-table-expand", align: 'center' }
+        { text: "EDI Number", value: "id" },
+        { text: "Food Bank", value: "foodBankId" },
+        { text: "Time", value: "recieved" },
+        { text: "Order Status", value: "status" },
+        { text: "", value: "response" },
+        { text: "", value: "data-table-expand" }
       ]
     };
   },
@@ -65,18 +65,14 @@ export default {
     ...mapGetters(["getActiveOrders"])
   },
   methods: {
-    ...mapActions({
-      postStatusUpdate: "postStatusUpdate"
-    }),
     changeStatus(index) {
-      this.activeOrders[index].status = "Picked up";
-      this.postStatusUpdate(this.activeOrders[index].id);
+      this.activeOrders[index].orderStatus = "Picked up";
     },
     removeOrder(index) {
       this.activeOrders.splice(index, 1);
     },
     shouldDisable(index) {
-      if (this.activeOrders[index].status == "Picked up") {
+      if (this.activeOrders[index].orderStatus == "Picked up") {
         return true;
       }
       return false;
