@@ -8,12 +8,14 @@
       :expanded.sync="expanded"
       item-key="id"
       show-expand
+      hide-actions
       :hide-default-footer="true"
+      :fixed-header="true"
     >
       <template v-slot:item="row">
         <tr>
           <td>{{ row.item.id }}</td>
-          <td>{{ row.item.foodBankId }}</td>
+          <td>{{ row.item.foodBank }}</td>
           <td>{{ row.item.recieved }}</td>
           <td>{{ row.item.status }}</td>
           <td>

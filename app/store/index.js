@@ -42,12 +42,19 @@ export default new Vuex.Store({
 		}),
 		bindActiveOrders(context) {
 			let activeOrders = db.collection("Orders");
+			let foodBanks = db.collection("FoodBank")
 			activeOrders.get().then((orders) => {
 				orders.forEach(order => {
 
 					let tmp = order.data();
 					if (tmp.groceryStoreId == "6773") {
-						context.state.activeOrders.push(tmp);
+						foodBanks.doc(tmp.foodBankId).get().then(doc => {
+							let foodBank = doc.data();
+							tmp.foodBank = foodBank.name;
+							context.state.activeOrders.push(tmp);
+						})
+
+
 					}
 				});
 			})
