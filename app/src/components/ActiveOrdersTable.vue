@@ -52,12 +52,12 @@ export default {
       singleExpand: false,
       activeOrders: [],
       fields: [
-        { text: "EDI Number", value: "id" },
-        { text: "Food Bank", value: "foodBankId" },
-        { text: "Time", value: "recieved" },
-        { text: "Order Status", value: "status" },
-        { text: "", value: "response" },
-        { text: "", value: "data-table-expand" }
+        { text: "EDI Number", value: "id", align: 'center' },
+        { text: "Food Bank", value: "foodBankId", align: 'center' },
+        { text: "Time", value: "recieved", align: 'center' },
+        { text: "Order Status", value: "status", align: 'center' },
+        { text: "", value: "response", align: 'center' },
+        { text: "", value: "data-table-expand", align: 'center' }
       ]
     };
   },
@@ -66,7 +66,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      postStatusUpdate: "postStatusUpdate";
+      postStatusUpdate: "postStatusUpdate"
     }),
     changeStatus(index) {
       this.activeOrders[index].status = "Picked up";
