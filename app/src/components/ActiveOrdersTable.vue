@@ -1,20 +1,21 @@
 <template>
   <div>
-    <v-btn @click="getInventory">Get Data</v-btn>
     <v-data-table
       :headers="fields"
       :items="activeOrders"
       class="elevation-1"
-      hide
-      actions
+      :single-expand="singleExpand"
+      :expanded.sync="expanded"
+      item-key="id"
+      show-expand
       :hide-default-footer="true"
     >
       <template v-slot:item="row">
         <tr>
-          <td>{{ row.item.EDINumber }}</td>
-          <td>{{ row.item.foodBank }}</td>
-          <td>{{ row.item.time }}</td>
-          <td>{{ row.item.orderStatus }}</td>
+          <td>{{ row.item.id }}</td>
+          <td>{{ row.item.foodBankId }}</td>
+          <td>{{ row.item.recieved }}</td>
+          <td>{{ row.item.status }}</td>
           <td>
             <v-btn icon id="response" @click="changeStatus(row.index)">
               <v-icon>mdi-check</v-icon>
@@ -30,28 +31,36 @@
           </td>
         </tr>
       </template>
+      <template v-slot:expanded-item="{ fields }">
+        <td :colspan="fields.length">Peek-a-boo!</td>
+      </template>
     </v-data-table>
   </div>
 </template>
 <script>
-import io from "socket.io-client";
+import { mapGetters } from "vuex";
 
 export default {
   mounted() {
-      this.sendStoreId();
-    },
+    this.activeOrders = this.getActiveOrders;
+  },
   data() {
     return {
-      socket: io("localhost:3001"),
+      expanded: [],
+      singleExpand: false,
       activeOrders: [],
       fields: [
-        { text: "EDI Number", value: "EDINumber" },
-        { text: "Food Bank", value: "foodBank" },
-        { text: "Time", value: "time" },
-        { text: "Order Status", value: "orderStatus" },
-        { text: "", value: "response" }
+        { text: "EDI Number", value: "id" },
+        { text: "Food Bank", value: "foodBankId" },
+        { text: "Time", value: "recieved" },
+        { text: "Order Status", value: "status" },
+        { text: "", value: "response" },
+        { text: "", value: "data-table-expand" }
       ]
     };
+  },
+  computed: {
+    ...mapGetters(["getActiveOrders"])
   },
   methods: {
     changeStatus(index) {
@@ -65,25 +74,6 @@ export default {
         return true;
       }
       return false;
-    },
-    getInventory() {
-      console.log("getting invent")
-      this.activeOrders = [];
-      this.socket.on("INVENTORY_DATA", items => {
-        console.log(items);
-      //   items.forEach(item => {
-      //     this.activeOrders.push(item);
-      //     console.log(item);
-      //   });
-      });
-    },
-    sendStoreId() {
-      //event.preventDefault();
-      // send storeID to back end to get inventory
-      console.log("sending")
-      this.socket.emit("STORE_ID", {
-        param: "6773"
-      });
     }
   }
 };

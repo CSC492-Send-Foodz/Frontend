@@ -12,7 +12,8 @@ export default new Vuex.Store({
 
 	state: {
 		id: null,
-		inventoryItems: []
+		inventoryItems: [],
+		activeOrders: []
 	},
 
 	getters: {
@@ -22,6 +23,10 @@ export default new Vuex.Store({
 
 		getInventoryItem: (state) => (index) => {
 			return state.inventoryItems[index]
+		},
+
+		getActiveOrders: (state) => {
+			return state.activeOrders
 		}
 	},
 
@@ -35,7 +40,18 @@ export default new Vuex.Store({
 			bindFirestoreRef('inventoryItems',
 				db.collection("GroceryStores").doc("6773").collection("InventoryCollection").doc("Items"))
 		}),
+		bindActiveOrders(context) {
+			let activeOrders = db.collection("Orders");
+			activeOrders.get().then((orders) => {
+				orders.forEach(order => {
 
+					let tmp = order.data();
+					if (tmp.groceryStoreId == "6773") {
+						context.state.activeOrders.push(tmp);
+					}
+				});
+			})
+		},
 		postInventoryItems(context, uploadedInventoryFile) {
 			if (uploadedInventoryFile !== undefined) {
 				PapaParse.parse(uploadedInventoryFile, {
