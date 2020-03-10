@@ -35,6 +35,18 @@ export default new Vuex.Store({
 			bindFirestoreRef('inventoryItems',
 				db.collection("GroceryStores").doc("6773").collection("InventoryCollection").doc("Items"))
 		}),
+		postStatusUpdate: firestoreAction((context, ediOrderNumber) => {
+			if (ediOrderNumber !== undefined) {
+				db.collection("Orders").doc(ediOrderNumber.toString())
+				.update({ status: "Picked up" })
+				.then(() => { console.log("Status updated") })
+			}
+		}),
+		bindActiveOrders(context) {
+			let activeOrders = db.collection("Orders");
+			let foodBanks = db.collection("FoodBank")
+			activeOrders.get().then((orders) => {
+				orders.forEach(order => {
 
 		postInventoryItems(context, uploadedInventoryFile) {
 			if (uploadedInventoryFile !== undefined) {
