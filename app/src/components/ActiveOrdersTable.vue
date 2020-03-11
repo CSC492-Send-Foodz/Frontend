@@ -31,11 +31,16 @@
   </div>
 </template>
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
-  mounted() {
+  created() {
     this.activeOrders = this.getActiveOrders;
+    for (let index = 0; index < this.activeOrders.length; index++) {
+      this.mapOrderToFoodBank(this.activeOrders[0]).then(order => {
+        this.activeOrders[index] = order;
+      });
+    }
   },
   data() {
     return {
@@ -58,6 +63,11 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      postStatusUpdate: "postStatusUpdate",
+      mapOrderToFoodBank: "mapOrderToFoodBank"
+    }),
+      this.postStatusUpdate(this.activeOrders[index].id);
     changeStatus(item) {
       let index = this.activeOrders.indexOf(item);
       this.activeOrders[index].status = "Picked up";

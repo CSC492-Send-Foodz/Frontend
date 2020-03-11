@@ -40,25 +40,29 @@ export default new Vuex.Store({
 			bindFirestoreRef('inventoryItems',
 				db.collection("GroceryStores").doc("6773").collection("InventoryCollection").doc("Items"))
 		}),
-		bindActiveOrders(context) {
-			let activeOrders = db.collection("Orders");
-			let foodBanks = db.collection("FoodBank")
-			activeOrders.get().then((orders) => {
-				orders.forEach(order => {
-
-					let tmp = order.data();
-					if (tmp.groceryStoreId == "6773") {
-						foodBanks.doc(tmp.foodBankId).get().then(doc => {
-							let foodBank = doc.data();
-							tmp.foodBank = foodBank.name;
-							context.state.activeOrders.push(tmp);
-						})
-
-
+		postStatusUpdate: firestoreAction((context, ediOrderNumber) => {
+			if (ediOrderNumber !== undefined) {
+				db.collection("Orders").doc(ediOrderNumber.toString())
+					.update({ status: "Picked up" })
+					.then(() => {
+						console.log("Status updated");
+					})
+			}
+		}),
+		bindActiveOrders: firestoreAction(({ bindFirestoreRef }) => {
+			return bindFirestoreRef('activeOrders', db.collection("Orders").where("groceryStoreId", "==", "6773"))
+		}),
+		mapOrderToFoodBank: firestoreAction((context, order) => {
+			db.collection("FoodBank").get().then(banks => {
+				banks.forEach(bank => {
+					let fb = bank.data()
+					if (order.foodBankId == bank.id) {
+						order.foodBank = fb.name
 					}
-				});
+				})
 			})
-		},
+			return order
+		}),
 		postInventoryItems(context, uploadedInventoryFile) {
 			if (uploadedInventoryFile !== undefined) {
 				PapaParse.parse(uploadedInventoryFile, {
