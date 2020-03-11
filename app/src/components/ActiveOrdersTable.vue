@@ -47,8 +47,13 @@
 import { mapGetters, mapActions } from "vuex";
 
 export default {
-  mounted() {
+  created() {
     this.activeOrders = this.getActiveOrders;
+    for (let index = 0; index < this.activeOrders.length; index++) {
+      this.mapOrderToFoodBank(this.activeOrders[0]).then(order => {
+        this.activeOrders[index] = order;
+      });
+    }
   },
   data() {
     return {
@@ -70,7 +75,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      postStatusUpdate: "postStatusUpdate"
+      postStatusUpdate: "postStatusUpdate",
+      mapOrderToFoodBank: "mapOrderToFoodBank"
     }),
     changeStatus(index) {
       this.activeOrders[index].status = "Picked up";
