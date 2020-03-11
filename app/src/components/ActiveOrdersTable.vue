@@ -12,20 +12,33 @@
       :fixed-header="true"
     >
       <template v-slot:expanded-item="{ headers, item }">
+        <td
+          v-for="food in item.inventory"
+          :colspan="headers.length"
+          :key="food.id"
+        >
+          {{ food.name }}: {{ food.quantity }}
+        </td>
+      </template>
+      <template v-slot:item.response="row">
         <td>
-          <v-btn icon id="response" @click="changeStatus(item)">
+          <v-btn
+            icon
+            id="response"
+            :disabled="shouldDisable(row.item)"
+            @click="changeStatus(row.item)"
+          >
             <v-icon>mdi-check</v-icon>
           </v-btn>
           <v-btn
             icon
             id="response"
-            :disabled="shouldDisable(item)"
-            @click="removeOrder(item)"
+            :disabled="shouldDisable(row.item)"
+            @click="removeOrder(row.item)"
           >
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </td>
-        <td :colspan="headers.length">{{ item.inventory }}</td>
       </template>
     </v-data-table>
   </div>
@@ -67,10 +80,10 @@ export default {
       postStatusUpdate: "postStatusUpdate",
       mapOrderToFoodBank: "mapOrderToFoodBank"
     }),
-      this.postStatusUpdate(this.activeOrders[index].id);
     changeStatus(item) {
       let index = this.activeOrders.indexOf(item);
       this.activeOrders[index].status = "Picked up";
+      this.postStatusUpdate(this.activeOrders[index].id);
     },
     removeOrder(item) {
       let index = this.activeOrders.indexOf(item);
