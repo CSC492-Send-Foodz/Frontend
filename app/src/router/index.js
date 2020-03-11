@@ -1,5 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import store from "../../store/index";
 
 Vue.use(VueRouter);
 
@@ -33,6 +34,14 @@ const router = new VueRouter({
     mode: "history",
     base: "/",
     routes
+});
+
+router.beforeEach((to, from, next) => {
+    if (to.name !== "login" && to.name !== "signup" && store.state.id === -1) {
+        next({ name: "login" });
+    } else {
+        next();
+    }
 });
 
 export default router;

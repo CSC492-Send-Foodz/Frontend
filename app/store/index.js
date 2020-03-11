@@ -11,27 +11,46 @@ Vue.use(Vuex, axios, vuexfireMutations)
 export default new Vuex.Store({
 
 	state: {
-		id: null,
+		id: -1,
+		email: "",
+		type: "",
 		inventoryItems: [],
 		activeOrders: []
 	},
 
 	getters: {
 		getAllInventoryItems: (state) => {
-			return state.inventoryItems
+			return state.inventoryItems;
 		},
 
 		getInventoryItem: (state) => (index) => {
-			return state.inventoryItems[index]
+			return state.inventoryItems[index];
 		},
 
-		getActiveOrders: (state) => {
-			return state.activeOrders
+		getID: (state) => {
+			return state.id;
+		},
+
+		getEmail: (state) => {
+			return state.email;
+		},
+
+		getType: (state) => {
+			return state.type;
 		}
 	},
 
 	mutations: {
 		...vuexfireMutations,
+		setID: (state, id) => {
+			state.id = id;
+		},
+		setEmail: (state, email) => {
+			state.email = email;
+		},
+		setType: (state, type) => {
+			state.type = type;
+		}
 	},
 
 	actions: {
