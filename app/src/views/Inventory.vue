@@ -36,7 +36,7 @@
 <script>
 import InventoryGrid from "../components/InventoryGrid.vue";
 import { mapActions } from "vuex";
-export default {
+export default { 
   name: "InventoryPage",
   data: () => ({
     uploadedInventoryFile: null,
