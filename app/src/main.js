@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import router from "./router";
-import vuetify from './plugins/vuetify'
+import vuetify from './plugins/vuetify';
 
 import App from './App.vue'
 
