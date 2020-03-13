@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-navigation-drawer v-model="sidebar"  :disable-resize-watcher ="true" app>
+    <v-navigation-drawer v-model="sidebar" :disable-resize-watcher="true" app>
       <v-list>
         <v-list-item v-for="item in menuItems" :key="item.title" :to="item.path">
           <v-list-item-action>
@@ -39,7 +39,21 @@
           v-for="profileItem in profileItems"
           :key="profileItem.title"
           :to="profileItem.path"
+          v-show="getID===-1"
         >{{ profileItem.title }}</v-btn>
+        <v-menu offset-y :open-on-hover="true">
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" v-show="getID!==-1">
+              <div>
+                <h3>{{getEmail}}</h3>
+                <div style="font-size: 75%">{{getType}}</div>
+              </div>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item @click="logout">Logout</v-list-item>
+          </v-list>
+        </v-menu>
       </v-toolbar-items>
     </v-app-bar>
 
@@ -51,11 +65,11 @@
 </template>
 
 <script>
-import store from "../store/index.js";
+import { mapGetters, mapMutations } from "vuex";
+import router from "./router/index";
 
 export default {
   name: "App",
-  store,
   data() {
     return {
       appTitle: "Send Foodz",
@@ -70,6 +84,18 @@ export default {
         { title: "Log In", path: "/login" }
       ]
     };
+  },
+  computed: {
+    ...mapGetters(["getID", "getEmail", "getType"])
+  },
+  methods: {
+    ...mapMutations(["setID","setEmail","setType"]),
+    logout() {
+      this.setID(-1);
+      this.setEmail("");
+      this.setType("");
+      router.push("Login");
+    }
   }
 };
 </script>
