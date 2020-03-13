@@ -65,13 +65,11 @@
 </template>
 
 <script>
-import store from "../store/index.js";
 import { mapGetters, mapMutations } from "vuex";
 import router from "./router/index";
 
 export default {
   name: "App",
-  store,
   data() {
     return {
       appTitle: "Send Foodz",

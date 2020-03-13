@@ -69,7 +69,7 @@ export default new Vuex.Store({
 			}
 		}),
 		bindActiveOrders: firestoreAction(({ bindFirestoreRef }) => {
-			return bindFirestoreRef('activeOrders', db.collection("Orders").where("groceryStoreId", "==", "6773"))
+			return bindFirestoreRef('activeOrders', db.collection("Orders").where("groceryStoreId", "==", "3351"))
 		}),
 		mapOrderToFoodBank: firestoreAction((context, order) => {
 			db.collection("FoodBank").get().then(banks => {
