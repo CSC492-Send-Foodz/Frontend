@@ -18,6 +18,10 @@ export default new Vuex.Store({
 	},
 
 	getters: {
+		getFoodBankOrders: (state) => {
+			return state.foodbankOrders
+		},
+		
 		getAllInventoryItems: (state) => {
 			return state.inventoryItems
 		},
@@ -28,10 +32,6 @@ export default new Vuex.Store({
 
 		getActiveOrders: (state) => {
 			return state.activeOrders
-		},
-
-		getFoodBankOrders: (state) => {
-			return state.foodbankOrders
 		}
 	},
 
