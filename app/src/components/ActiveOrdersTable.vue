@@ -6,17 +6,18 @@
       :single-expand="true"
       :expanded.sync="expanded"
       item-key="name"
-      show-expand
       class="elevation-1"
+      show-expand
       :hide-default-footer="true"
       :fixed-header="true"
     >
       <template v-slot:expanded-item="{ headers, item }">
         <td
           v-for="food in item.inventory"
-          :colspan="headers.length"
+          :colspan="headers.length-2"
           :key="food.id"
         >
+        <strong>{{food.ediOrderNumber}} </strong><br/>
           {{ food.name }}: {{ food.quantity }}
         </td>
       </template>
@@ -49,9 +50,18 @@ import { mapGetters, mapActions } from "vuex";
 export default {
   created() {
     this.activeOrders = this.getActiveOrders;
+    if (this.activeOrders.length === 0) {
+      this.activeOrders = [];
+      return;
+    }
     for (let index = 0; index < this.activeOrders.length; index++) {
       this.mapOrderToFoodBank(this.activeOrders[index]).then(order => {
-        
+        if (order.status === 'Order is unable to completed' || order.status === 'Driver has dropped off the inventory at the food bank') {
+          this.activeOrders.splice(index, 1);
+          console.log(this.activeOrders.length)
+        } else {
+          this.activeOrders[index] = order; 
+        }
       });
     }
   },
@@ -60,7 +70,7 @@ export default {
       expanded: [],
       activeOrders: [],
       fields: [
-        { text: "EDI Number", value: "id", align: "center" },
+        { text: "Order ID", value: "id", align: "center" },
         { text: "Food Bank", value: "foodBank", align: "center" },
         { text: "Time", value: "recieved", align: "center" },
         { text: "Order Status", value: "status", align: "center" },
