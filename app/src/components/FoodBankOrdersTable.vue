@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-data-table
+    <v-data-table 
       :headers="fields"
       :items="activeOrders"
       :single-expand="true"
@@ -20,37 +20,20 @@
           {{ food.name }}: {{ food.quantity }}
         </td>
       </template>
-      <template v-slot:item.response="row">
-        <td>
-          <v-btn
-            icon
-            id="response"
-            :disabled="shouldDisable(row.item)"
-            @click="changeStatus(row.item)"
-          >
-            <v-icon>mdi-check</v-icon>
-          </v-btn>
-          <v-btn
-            icon
-            id="response"
-            :disabled="shouldDisable(row.item)"
-            @click="removeOrder(row.item)"
-          >
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </td>
-      </template>
+
     </v-data-table>
   </div>
 </template>
+
 <script>
 import { mapGetters, mapActions } from "vuex";
 
 export default {
   created() {
     this.activeOrders = this.getActiveOrders;
+    console.log("this is active orders" + JSON.stringify(this.activeOrders));
     for (let index = 0; index < this.activeOrders.length; index++) {
-      this.mapOrderToFoodBank(this.activeOrders[index]).then(order => {
+      this.mapOrderToGroceryStore(this.activeOrders[index]).then(order => {
         this.activeOrders[index] = order;
       });
     }
@@ -61,10 +44,10 @@ export default {
       activeOrders: [],
       fields: [
         { text: "EDI Number", value: "id", align: "center" },
-        { text: "Food Bank", value: "foodBank", align: "center" },
-        { text: "Time", value: "recieved", align: "center" },
+        { text: "Grocery Store", value: "groceryStore", align: "center" },
+        { text: "Order PlacedTime", value: "recieved", align: "center" },
         { text: "Order Status", value: "status", align: "center" },
-        { text: "", value: "response", align: "center" },
+        { text: "Drop-off Time", value: "completed", align: "center" },
         { text: "", value: "data-table-expand", align: "center" }
       ]
     };
@@ -78,24 +61,8 @@ export default {
   methods: {
     ...mapActions({
       postStatusUpdate: "postStatusUpdate",
-      mapOrderToFoodBank: "mapOrderToFoodBank"
-    }),
-    changeStatus(item) {
-      let index = this.activeOrders.indexOf(item);
-      this.activeOrders[index].status = "Picked up";
-      this.postStatusUpdate(this.activeOrders[index].id);
-    },
-    removeOrder(item) {
-      let index = this.activeOrders.indexOf(item);
-      this.activeOrders.splice(index, 1);
-    },
-    shouldDisable(item) {
-      let index = this.activeOrders.indexOf(item);
-      if (this.activeOrders[index].status == "Picked up") {
-        return true;
-      }
-      return false;
-    }
+      mapOrderToGroceryStore: "mapOrderToGroceryStore"
+    })
   }
 };
 </script>
