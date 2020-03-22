@@ -63,6 +63,7 @@ export default {
         { title: "Inventory", path: "/inventory" },
         { title: "Orders", path: "/orders" },
         { title: "History", path: "/history" },
+        //{ title: "Foodbank orders", path: "/foodbank/orders" },
       ],
       profileItems: [
         { title: "Sign Up", path: "/signup" },

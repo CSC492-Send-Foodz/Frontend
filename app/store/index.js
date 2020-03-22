@@ -74,7 +74,7 @@ export default new Vuex.Store({
 		mapOrderToGroceryStore: firestoreAction((context, order) => {
 			db.collection("GroceryStores").get().then(stores => {
 				stores.forEach(store => {
-					console.log("this is store id:" + store.id)
+					//console.log("this is store id:" + store.id)
 					let gs = store.data()
 					if (order.groceryStoreId == store.id) {
 						order.groceryStore = gs.company

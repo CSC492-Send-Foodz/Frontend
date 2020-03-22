@@ -31,9 +31,13 @@ import { mapGetters, mapActions } from "vuex";
 export default {
   created() {
     this.activeOrders = this.getActiveOrders;
-    console.log("this is active orders" + JSON.stringify(this.activeOrders));
     for (let index = 0; index < this.activeOrders.length; index++) {
       this.mapOrderToGroceryStore(this.activeOrders[index]).then(order => {
+        if (this.activeOrders[index]["status"] == "Driver has picked up inventory from the grocery store."){
+          
+          //Where I need to send push notification but console logging for now
+          console.log("Following order " + this.activeOrders[index]["id"] + " has status of: " + this.activeOrders[index]["status"]);
+        }
         this.activeOrders[index] = order;
       });
     }
