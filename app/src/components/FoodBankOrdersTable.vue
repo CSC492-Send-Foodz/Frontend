@@ -2,7 +2,7 @@
   <div>
     <v-data-table 
       :headers="fields"
-      :items="activeOrders"
+      :items="foodbankOrders"
       :single-expand="true"
       :expanded.sync="expanded"
       item-key="name"
@@ -30,22 +30,22 @@ import { mapGetters, mapActions } from "vuex";
 
 export default {
   created() {
-    this.activeOrders = this.getActiveOrders;
-    for (let index = 0; index < this.activeOrders.length; index++) {
-      this.mapOrderToGroceryStore(this.activeOrders[index]).then(order => {
-        if (this.activeOrders[index]["status"] == "Driver has picked up inventory from the grocery store."){
+    this.foodbankOrders = this.getFoodBankOrders;
+    for (let index = 0; index < this.foodbankOrders.length; index++) {
+      this.mapOrderToGroceryStore(this.foodbankOrders[index]).then(order => {
+        if (this.foodbankOrders[index]["status"] == "Driver has picked up inventory from the grocery store."){
           
           //Where I need to send push notification but console logging for now
-          console.log("Following order " + this.activeOrders[index]["id"] + " has status of: " + this.activeOrders[index]["status"]);
+          console.log("Following order " + this.foodbankOrders[index]["id"] + " has status of: " + this.foodbankOrders[index]["status"]);
         }
-        this.activeOrders[index] = order;
+        this.foodbankOrders[index] = order;
       });
     }
   },
   data() {
     return {
       expanded: [],
-      activeOrders: [],
+      foodbankOrders: [],
       fields: [
         { text: "EDI Number", value: "id", align: "center" },
         { text: "Grocery Store", value: "groceryStore", align: "center" },
@@ -57,9 +57,9 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["getActiveOrders"]),
+    ...mapGetters(["getFoodBankOrders"]),
     selected() {
-      return this.activeOrders.indexOf(this.expanded[0]);
+      return this.foodbankOrders.indexOf(this.expanded[0]);
     }
   },
   methods: {

@@ -14,6 +14,7 @@ export default new Vuex.Store({
 		id: null,
 		inventoryItems: [],
 		activeOrders: [],
+		foodbankOrders: []
 	},
 
 	getters: {
@@ -27,6 +28,10 @@ export default new Vuex.Store({
 
 		getActiveOrders: (state) => {
 			return state.activeOrders
+		},
+
+		getFoodBankOrders: (state) => {
+			return state.foodbankOrders
 		}
 	},
 
@@ -39,7 +44,6 @@ export default new Vuex.Store({
 			bindFirestoreRef('inventoryItems',
 				db.collection("GroceryStores").doc("6773").collection("InventoryCollection").doc("Items"))
 		}),
-
 
 		postStatusUpdate: firestoreAction((context, ediOrderNumber) => {
 			if (ediOrderNumber !== undefined) {
@@ -68,7 +72,7 @@ export default new Vuex.Store({
 		}),		
 		
 		bindFoodBankOrders: firestoreAction(({ bindFirestoreRef }) => {
-			return bindFirestoreRef('foodBankOrders', db.collection("Orders").where("foodBankId", "==", "8054"))
+			return bindFirestoreRef('foodbankOrders', db.collection("Orders").where("foodBankId", "==", "8054"))
 		}),
 
 		mapOrderToGroceryStore: firestoreAction((context, order) => {
