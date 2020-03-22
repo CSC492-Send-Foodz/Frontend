@@ -19,6 +19,7 @@ export default new Vuex.Store({
 		userType: "Grocery Store"
 	},
 
+	
 	getters: {
 		getFoodBankOrders: (state) => {
 			return state.foodbankOrders
