@@ -15,10 +15,15 @@ export default new Vuex.Store({
 		email: "",
 		type: "",
 		inventoryItems: [],
-		activeOrders: []
+		activeOrders: [],
+		foodbankOrders: []
 	},
 
 	getters: {
+		getFoodBankOrders: (state) => {
+			return state.foodbankOrders
+		},
+		
 		getAllInventoryItems: (state) => {
 			return state.inventoryItems;
 		},
@@ -59,10 +64,10 @@ export default new Vuex.Store({
 
 	actions: {
 		bindInventoryItems: firestoreAction(({ bindFirestoreRef }) => {
-			// return the promise returned by `bindFirestoreRef`
 			bindFirestoreRef('inventoryItems',
 				db.collection("GroceryStores").doc("6773").collection("InventoryCollection").doc("Items"))
 		}),
+
 		postStatusUpdate: firestoreAction((context, ediOrderNumber) => {
 			if (ediOrderNumber !== undefined) {
 				db.collection("Orders").doc(ediOrderNumber.toString())
@@ -72,15 +77,34 @@ export default new Vuex.Store({
 					})
 			}
 		}),
+
 		bindActiveOrders: firestoreAction(({ bindFirestoreRef }) => {
 			return bindFirestoreRef('activeOrders', db.collection("Orders").where("groceryStoreId", "==", "3351"))
 		}),
+
 		mapOrderToFoodBank: firestoreAction((context, order) => {
 			db.collection("FoodBank").get().then(banks => {
 				banks.forEach(bank => {
 					let fb = bank.data()
 					if (order.foodBankId == bank.id) {
 						order.foodBank = fb.name
+					}
+				})
+			})
+			return order
+		}),		
+		
+		bindFoodBankOrders: firestoreAction(({ bindFirestoreRef }) => {
+			return bindFirestoreRef('foodbankOrders', db.collection("Orders").where("foodBankId", "==", "8054"))
+		}),
+
+		mapOrderToGroceryStore: firestoreAction((context, order) => {
+			db.collection("GroceryStores").get().then(stores => {
+				stores.forEach(store => {
+					//console.log("this is store id:" + store.id)
+					let gs = store.data()
+					if (order.groceryStoreId == store.id) {
+						order.groceryStore = gs.company
 					}
 				})
 			})

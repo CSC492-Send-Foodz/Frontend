@@ -59,7 +59,6 @@
 
     <v-content>
       <router-view />
-      <ActiveOrders />
     </v-content>
   </v-app>
 </template>
@@ -77,7 +76,6 @@ export default {
       menuItems: [
         { title: "Inventory", path: "/inventory" },
         { title: "Orders", path: "/orders" },
-        { title: "History", path: "/history" }
       ],
       profileItems: [
         { title: "Sign Up", path: "/signup" },
