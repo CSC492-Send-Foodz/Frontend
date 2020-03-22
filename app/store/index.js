@@ -37,6 +37,10 @@ export default new Vuex.Store({
 
 		getType: (state) => {
 			return state.type;
+		},
+
+		getActiveOrders: (state) => {
+			return state.activeOrders;
 		}
 	},
 
