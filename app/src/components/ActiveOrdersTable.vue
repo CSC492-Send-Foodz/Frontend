@@ -51,7 +51,7 @@ export default {
     this.activeOrders = this.getActiveOrders;
     for (let index = 0; index < this.activeOrders.length; index++) {
       this.mapOrderToFoodBank(this.activeOrders[index]).then(order => {
-        this.activeOrders[index] = order;
+        
       });
     }
   },
