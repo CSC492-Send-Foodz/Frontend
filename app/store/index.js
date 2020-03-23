@@ -63,6 +63,7 @@ export default new Vuex.Store({
 
 	},
 
+	
 	actions: {
 		bindInventoryItems: firestoreAction(({ bindFirestoreRef},id) => {
 			bindFirestoreRef('inventoryItems',
