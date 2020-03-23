@@ -2,7 +2,7 @@
 <template>
   <div>
     <h1 class=".display-4">Donation Inventory</h1>
-    <v-dialog v-model="dialog" width="500">
+    <v-dialog v-if="this.getUserType === 'Grocery Store'" v-model="dialog" width="500">
       <template v-slot:activator="{ on }">
         <v-btn color="white" v-on="on">Place Donation</v-btn>
       </template>
@@ -24,36 +24,46 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="black" text @click="handleFileUpload(uploadedInventoryFile); dialog = false">Confirm Donation</v-btn>
+          <v-btn
+            color="black"
+            text
+            @click="handleFileUpload(uploadedInventoryFile); dialog = false"
+          >Confirm Donation</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-
     <InventoryGrid />
   </div>
 </template>
 
 <script>
 import InventoryGrid from "../components/InventoryGrid.vue";
-import { mapActions } from "vuex";
-export default { 
+import { mapGetters, mapActions } from "vuex";
+export default {
   name: "InventoryPage",
-  data: () => ({
-    uploadedInventoryFile: null,
-    dialog: false
-  }),
+  data() {
+    return {
+      id: this.$route.params.id,
+      uploadedInventoryFile: null,
+      dialog: false
+    };
+  },
+  computed: {
+    ...mapGetters({
+      getUserType: "getUserType"
+    })
+  },
   components: {
     InventoryGrid
   },
   methods: {
     ...mapActions({
       handleFileUpload: "postInventoryItems",
-      setInventoryItem: "setInventoryItem",
       bindInventoryItems: "bindInventoryItems"
     })
   },
-  mounted () {
-    this.bindInventoryItems();
-  },
+  mounted() {
+   this.bindInventoryItems(this.id);
+  }
 };
 </script>
