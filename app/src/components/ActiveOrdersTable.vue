@@ -72,7 +72,6 @@ export default {
       updateOrderStatus: "updateOrderStatus"
     }),
     changeStatus(item, status) {
-      console.log(status);
       this.updateOrderStatus({ id: item.id, status: status });
     },
     // removeOrder(item) {
