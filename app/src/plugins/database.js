@@ -7,5 +7,5 @@ import firebase from 'firebase/app'
 import 'firebase/firestore'
 
 export default firebase
-  .initializeApp({ projectId: 'send-foodz-1a677' })
+  .initializeApp({ projectId: 'send-foodz-1a677'})
   .firestore()

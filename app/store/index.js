@@ -5,20 +5,21 @@ import axios from 'axios'
 import { vuexfireMutations, firestoreAction } from 'vuexfire'
 import db from "../src/plugins/database"
 
-
 Vue.use(Vuex, axios, vuexfireMutations)
 
 export default new Vuex.Store({
 
 	state: {
-		id: -1,
+		id: "3351",
 		email: "",
-		type: "",
 		inventoryItems: [],
+		groceryStores: [],
 		activeOrders: [],
-		foodbankOrders: []
+		shopingCart:[],
+		userType: "Grocery Store"
 	},
 
+	
 	getters: {
 		getFoodBankOrders: (state) => {
 			return state.foodbankOrders
@@ -27,25 +28,20 @@ export default new Vuex.Store({
 		getAllInventoryItems: (state) => {
 			return state.inventoryItems;
 		},
-
-		getInventoryItem: (state) => (index) => {
-			return state.inventoryItems[index];
+		getAllGroceryStores: (state) => {
+			return state.groceryStores
 		},
-
-		getID: (state) => {
-			return state.id;
+		getActiveOrders: (state) => {
+			return state.activeOrders
 		},
-
+		getId: (state) => {
+			return state.id
+		},
+		getUserType: (state) => {
+			return state.userType
+		},
 		getEmail: (state) => {
 			return state.email;
-		},
-
-		getType: (state) => {
-			return state.type;
-		},
-
-		getActiveOrders: (state) => {
-			return state.activeOrders;
 		}
 	},
 
@@ -57,58 +53,42 @@ export default new Vuex.Store({
 		setEmail: (state, email) => {
 			state.email = email;
 		},
-		setType: (state, type) => {
+		setUserType: (state, type) => {
 			state.type = type;
+		},
+		addInventoryItemToCart: (state, item) => {
+			state.shopingCart.push(item)
+			console.log("groceryStoreId: " + item.groceryStoreId + " itemId: " + item.id)
 		}
+
 	},
 
+	
 	actions: {
-		bindInventoryItems: firestoreAction(({ bindFirestoreRef }) => {
+		bindInventoryItems: firestoreAction(({ bindFirestoreRef},id) => {
 			bindFirestoreRef('inventoryItems',
-				db.collection("GroceryStores").doc("6773").collection("InventoryCollection").doc("Items"))
+				db.collection("GroceryStores").doc(id).collection("InventoryCollection").doc("Items"))
 		}),
-
-		postStatusUpdate: firestoreAction((context, ediOrderNumber) => {
-			if (ediOrderNumber !== undefined) {
-				db.collection("Orders").doc(ediOrderNumber.toString())
-					.update({ status: "Picked up" })
-					.then(() => {
-						console.log("Status updated");
-					})
+		bindActiveOrders: firestoreAction(({ bindFirestoreRef, state }) => {
+			var idType;
+			if (state.userType === "Grocery Store") {
+				idType = "groceryStoreId"
 			}
+			else if (state.userType === "Food Bank") {
+				idType = "foodBankId"
+			}
+			bindFirestoreRef('activeOrders', db.collection("Orders").where(idType, "==", state.id))
+		}),
+		bindGroceryStores: firestoreAction(({ bindFirestoreRef }) => {
+			bindFirestoreRef('groceryStores',
+				db.collection("GroceryStores"))
 		}),
 
-		bindActiveOrders: firestoreAction(({ bindFirestoreRef }) => {
-			return bindFirestoreRef('activeOrders', db.collection("Orders").where("groceryStoreId", "==", "3351"))
-		}),
-
-		mapOrderToFoodBank: firestoreAction((context, order) => {
-			db.collection("FoodBank").get().then(banks => {
-				banks.forEach(bank => {
-					let fb = bank.data()
-					if (order.foodBankId == bank.id) {
-						order.foodBank = fb.name
-					}
-				})
+		updateOrderStatus: firestoreAction((context, payload) => {
+			axios.post("http://localhost:5000/send-foodz-1a677/us-central1/app/order/statusUpdate", {
+				id: payload.id,
+				status: payload.status
 			})
-			return order
-		}),		
-		
-		bindFoodBankOrders: firestoreAction(({ bindFirestoreRef }) => {
-			return bindFirestoreRef('foodbankOrders', db.collection("Orders").where("foodBankId", "==", "8054"))
-		}),
-
-		mapOrderToGroceryStore: firestoreAction((context, order) => {
-			db.collection("GroceryStores").get().then(stores => {
-				stores.forEach(store => {
-					//console.log("this is store id:" + store.id)
-					let gs = store.data()
-					if (order.groceryStoreId == store.id) {
-						order.groceryStore = gs.company
-					}
-				})
-			})
-			return order
 		}),
 		postInventoryItems(context, uploadedInventoryFile) {
 			if (uploadedInventoryFile !== undefined) {
@@ -120,19 +100,16 @@ export default new Vuex.Store({
 								id: resultData[0],
 								name: resultData[1],
 								brand: resultData[2],
-								groceryStoreId: resultData[3],
+								groceryStoreId: context.state.id,
 								quantity: resultData[4],
 								expirationDate: resultData[5]
 							})
 						})
 						axios.post("http://localhost:5000/send-foodz-1a677/us-central1/app/groceryStore/updateInventory", {
-							groceryStoreId: "6773",
+							groceryStoreId: context.state.id,
 							ediOrderNumber: "124AZ",
 							inventory: items
 						})
-							.then(function (response) {
-								console.log(response.data);
-							})
 					}
 				});
 			}
@@ -140,7 +117,7 @@ export default new Vuex.Store({
 		deleteInventoryItems(context, payload) {
 			axios.post("http://localhost:5000/send-foodz-1a677/us-central1/app/groceryStore/removeInventoryItem", {
 				groceryStoreId: payload.groceryStoreId,
-				id: payload.itemId
+				id: payload.id
 			})
 		}
 	}

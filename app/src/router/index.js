@@ -6,10 +6,16 @@ Vue.use(VueRouter);
 
 const routes = [
     {
-        path: "/inventory",
+        path: "/grocery-store/:id/inventory",
         name: "inventory",
         component: () =>
-            import("../views/Inventory.vue")
+            import("../views/GroceryStoreInventory.vue")
+    },
+    {
+        path: "/available-grocery-stores",
+        name: "availableGroceryStores",
+        component: () =>
+            import("../views/GroceryStores.vue")
     },
     {
         path: "/signup",
