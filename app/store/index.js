@@ -80,7 +80,6 @@ export default new Vuex.Store({
 			bindFirestoreRef('activeOrders', db.collection("Orders").where(idType, "==", state.id)
 			.where('status', 'in', ['Looking for Driver', 'Driver on route for pick up', 'Inventory picked up']))
 		}),
-		
 		bindGroceryStores: firestoreAction(({ bindFirestoreRef }) => {
 			bindFirestoreRef('groceryStores',
 				db.collection("GroceryStores"))
