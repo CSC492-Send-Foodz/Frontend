@@ -74,9 +74,6 @@ export default {
       getId: "getId",
       getEmail: "getEmail"
     }),
-
-
-
     
     foodBankTabs: function() {
       return [
