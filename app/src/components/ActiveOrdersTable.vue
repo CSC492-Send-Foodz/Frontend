@@ -65,6 +65,7 @@ export default {
       updateOrderStatus: "updateOrderStatus"
     }),
     changeStatus(item, status) {
+
       this.updateOrderStatus({ id: item.id, status: status });
     },
 
