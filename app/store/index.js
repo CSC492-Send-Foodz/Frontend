@@ -10,20 +10,16 @@ Vue.use(Vuex, axios, vuexfireMutations)
 export default new Vuex.Store({
 
 	state: {
-		id: "3351",
+		id: "8054",
 		email: "",
 		inventoryItems: [],
 		groceryStores: [],
 		activeOrders: [],
 		shopingCart:[],
-		userType: "Grocery Store"
+		userType: "Food Bank"
 	},
 
-	
 	getters: {
-		getFoodBankOrders: (state) => {
-			return state.foodbankOrders
-		},
 		
 		getAllInventoryItems: (state) => {
 			return state.inventoryItems;
@@ -63,12 +59,14 @@ export default new Vuex.Store({
 
 	},
 
-	
 	actions: {
+
 		bindInventoryItems: firestoreAction(({ bindFirestoreRef},id) => {
 			bindFirestoreRef('inventoryItems',
 				db.collection("GroceryStores").doc(id).collection("InventoryCollection").doc("Items"))
 		}),
+
+
 		bindActiveOrders: firestoreAction(({ bindFirestoreRef, state }) => {
 			var idType;
 			if (state.userType === "Grocery Store") {
@@ -77,8 +75,11 @@ export default new Vuex.Store({
 			else if (state.userType === "Food Bank") {
 				idType = "foodBankId"
 			}
-			bindFirestoreRef('activeOrders', db.collection("Orders").where(idType, "==", state.id))
+
+			bindFirestoreRef('activeOrders', db.collection("Orders").where(idType, "==", state.id)
+			.where('status', 'in', ['Looking for Driver', 'Driver on route for pick up', 'Inventory picked up']))
 		}),
+
 		bindGroceryStores: firestoreAction(({ bindFirestoreRef }) => {
 			bindFirestoreRef('groceryStores',
 				db.collection("GroceryStores"))
@@ -90,6 +91,7 @@ export default new Vuex.Store({
 				status: payload.status
 			})
 		}),
+
 		postInventoryItems(context, uploadedInventoryFile) {
 			if (uploadedInventoryFile !== undefined) {
 				PapaParse.parse(uploadedInventoryFile, {

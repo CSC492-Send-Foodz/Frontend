@@ -32,14 +32,7 @@
           >
             <v-icon>mdi-check</v-icon>
           </v-btn>
-          <!-- <v-btn
-            icon
-            id="response"
-            :disabled="enableCancel(row.item)"
-            @click="removeOrder(row.item)"
-          >
-            <v-icon>mdi-close</v-icon>
-          </v-btn> -->
+
         </td>
       </template>
     </v-data-table>
@@ -72,12 +65,10 @@ export default {
       updateOrderStatus: "updateOrderStatus"
     }),
     changeStatus(item, status) {
+
       this.updateOrderStatus({ id: item.id, status: status });
     },
-    // removeOrder(item) {
-    //   let index = this.getActiveOrders.indexOf(item);
-    //   this.activeOrders.splice(index, 1);
-    // },
+
     disablePickUpConfirmation(item) {
       return (
         item.status !=
