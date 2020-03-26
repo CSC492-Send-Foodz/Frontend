@@ -76,10 +76,6 @@ export default {
       getId: "getId",
       getEmail: "getEmail"
     }),
-    //activeOrders of v
-
-
-
 
     foodBankTabs: function() {
       return [
