@@ -28,7 +28,7 @@
             icon
             id="response"
             :disabled="disablePickUpConfirmation(row.item)"
-            @click="changeStatus(row.item, 'Inventory picked up')"
+            @click="changeStatus(row.item, afterConfirmationStatus())"
           >
             <v-icon>mdi-check</v-icon>
           </v-btn>
@@ -83,6 +83,10 @@ export default {
         item.status !=
         "Driver on route for pick up"
       );
+    },
+    afterConfirmationStatus(){
+      if (this.getUserType === 'Food Bank') return 'Inventory picked up'
+      else if (this.getUserType === 'Grocery Store') return 'Inventory Delivered'
     }
   }
 };

@@ -77,7 +77,8 @@ export default new Vuex.Store({
 			else if (state.userType === "Food Bank") {
 				idType = "foodBankId"
 			}
-			bindFirestoreRef('activeOrders', db.collection("Orders").where(idType, "==", state.id))
+			bindFirestoreRef('activeOrders', db.collection("Orders").where(idType, "==", state.id)
+			.where('status', 'in', ['Looking for Driver', 'Driver on route for pick up', 'Inventory picked up']))
 		}),
 		bindGroceryStores: firestoreAction(({ bindFirestoreRef }) => {
 			bindFirestoreRef('groceryStores',
