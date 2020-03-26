@@ -74,6 +74,8 @@ export default {
       getId: "getId",
       getEmail: "getEmail"
     }),
+
+    
     foodBankTabs: function() {
       return [
         { title: "Stores", path: "/available-grocery-stores" },
