@@ -9,21 +9,20 @@ Vue.use(Vuex, axios, vuexfireMutations)
 
 export default new Vuex.Store({
 
+
+	//Stores permanent data
 	state: {
-		id: "3351",
+		id: "8054",
 		email: "",
 		inventoryItems: [],
 		groceryStores: [],
 		activeOrders: [],
 		shopingCart:[],
-		userType: "Grocery Store"
+		userType: "Food Bank"
 	},
 
-	
+	//Methods used to retrieve state data
 	getters: {
-		getFoodBankOrders: (state) => {
-			return state.foodbankOrders
-		},
 		
 		getAllInventoryItems: (state) => {
 			return state.inventoryItems;
@@ -45,6 +44,7 @@ export default new Vuex.Store({
 		}
 	},
 
+	//Method used to modify state
 	mutations: {
 		...vuexfireMutations,
 		setID: (state, id) => {
@@ -63,12 +63,19 @@ export default new Vuex.Store({
 
 	},
 
-	
+	//Methods to perform any arbitrary asynchronous operations
 	actions: {
+
+		//bindFirestoreRef: Binds a collection, Query or Document to a property previously declared in the state
+		//bind inventoryItems state with Items data from firestore
+
+
 		bindInventoryItems: firestoreAction(({ bindFirestoreRef},id) => {
 			bindFirestoreRef('inventoryItems',
 				db.collection("GroceryStores").doc(id).collection("InventoryCollection").doc("Items"))
 		}),
+
+
 		bindActiveOrders: firestoreAction(({ bindFirestoreRef, state }) => {
 			var idType;
 			if (state.userType === "Grocery Store") {
@@ -77,19 +84,28 @@ export default new Vuex.Store({
 			else if (state.userType === "Food Bank") {
 				idType = "foodBankId"
 			}
-			bindFirestoreRef('activeOrders', db.collection("Orders").where(idType, "==", state.id))
+
+			//activeOrders is a list in state, and bindFIrestoreRef stores this data 
+			bindFirestoreRef('activeOrders', db.collection("Orders").where(idType, "==", state.id)
+			.where('status', 'in', ['Looking for Driver', 'Driveer on route for pick up', 'Inventory picked up']))
 		}),
+
+		//binds groceryStores with grocery store data in firestore
 		bindGroceryStores: firestoreAction(({ bindFirestoreRef }) => {
 			bindFirestoreRef('groceryStores',
 				db.collection("GroceryStores"))
 		}),
 
+		//payload is the data passed to our mutation from the component committing the mutation
+		//context is just a literal object with some properties from local, and other properties from store.
 		updateOrderStatus: firestoreAction((context, payload) => {
 			axios.post("http://localhost:5000/send-foodz-1a677/us-central1/app/order/statusUpdate", {
 				id: payload.id,
 				status: payload.status
 			})
 		}),
+
+		//upload csv files to data
 		postInventoryItems(context, uploadedInventoryFile) {
 			if (uploadedInventoryFile !== undefined) {
 				PapaParse.parse(uploadedInventoryFile, {

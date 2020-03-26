@@ -12,6 +12,7 @@ Vue.config.productionTip = false
 
 Vue.use(Vuex)
 
+//define view with vuex, router and vuetify
 new Vue({
   store,
   router,
