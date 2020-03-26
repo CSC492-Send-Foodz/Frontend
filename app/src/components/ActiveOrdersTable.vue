@@ -32,14 +32,7 @@
           >
             <v-icon>mdi-check</v-icon>
           </v-btn>
-          <!-- <v-btn
-            icon
-            id="response"
-            :disabled="enableCancel(row.item)"
-            @click="removeOrder(row.item)"
-          >
-            <v-icon>mdi-close</v-icon>
-          </v-btn> -->
+
         </td>
       </template>
     </v-data-table>
@@ -64,7 +57,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      getActiveOrders: "getActiveOrders"
+      getActiveOrders: "getActiveOrders",
+      getUserType: "getUserType"
     })
   },
   methods: {
@@ -74,10 +68,7 @@ export default {
     changeStatus(item, status) {
       this.updateOrderStatus({ id: item.id, status: status });
     },
-    // removeOrder(item) {
-    //   let index = this.getActiveOrders.indexOf(item);
-    //   this.activeOrders.splice(index, 1);
-    // },
+
     disablePickUpConfirmation(item) {
       return (
         item.status !=
@@ -85,8 +76,8 @@ export default {
       );
     },
     afterConfirmationStatus(){
-      if (this.getUserType === 'Food Bank') return 'Inventory picked up'
-      else if (this.getUserType === 'Grocery Store') return 'Inventory Delivered'
+      if (this.getUserType === 'Food Bank') return "Inventory picked up"
+      else if (this.getUserType === 'Grocery Store') return "Inventory Delivered"
     }
   }
 };

@@ -10,13 +10,13 @@ Vue.use(Vuex, axios, vuexfireMutations)
 export default new Vuex.Store({
 
 	state: {
-		id: "3351",
+		id: "8054",
 		email: "",
 		inventoryItems: [],
 		groceryStores: [],
 		activeOrders: [],
 		shopingCart:[],
-		userType: "Grocery Store"
+		userType: "Food Bank"
 	},
 
 	
