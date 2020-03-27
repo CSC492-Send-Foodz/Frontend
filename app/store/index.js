@@ -15,12 +15,15 @@ export default new Vuex.Store({
 		inventoryItems: [],
 		groceryStores: [],
 		activeOrders: [],
-		shopingCart:[],
-		userType: "Food Bank"
+		userType: "Food Bank",
+
+		shoppingCart: [],
+		shoppingCartGroceryStoreId: "",
+		showPopupStartNewShoppingCart: false
 	},
 
 	getters: {
-		
+
 		getAllInventoryItems: (state) => {
 			return state.inventoryItems;
 		},
@@ -37,7 +40,22 @@ export default new Vuex.Store({
 			return state.userType
 		},
 		getEmail: (state) => {
-			return state.email;
+			return state.email
+		},
+		getOrderFromGroceryStore: (state) => {
+			return state.shoppingCart
+		},
+		getShoppingCartGroceryStoreId: (state) => {
+			return state.shoppingCartGroceryStoreId
+		},
+		getShowPopupStartNewShoppingCart: (state) => {
+			return state.showPopupStartNewShoppingCart
+		},
+		getShoppingCart: (state) => {
+			return state.shoppingCart
+		},
+		getShoppingCartIndex: (state) => (id) => {
+			return state.shoppingCart.indexOf(state.shoppingCart.find(item => item.id == id))
 		}
 	},
 
@@ -52,16 +70,31 @@ export default new Vuex.Store({
 		setUserType: (state, type) => {
 			state.type = type;
 		},
-		addInventoryItemToCart: (state, item) => {
-			state.shopingCart.push(item)
-			console.log("groceryStoreId: " + item.groceryStoreId + " itemId: " + item.id)
-		}
-
+		setShoppingCartGroceryStoreId: (state, shoppingCartGroceryStoreId) => {
+			state.shoppingCartGroceryStoreId = shoppingCartGroceryStoreId
+		},
+		setShowPopupStartNewShoppingCart: (state, showPopupStartNewShoppingCart) => {
+			state.showPopupStartNewShoppingCart = showPopupStartNewShoppingCart
+		},
+		addInventoryItemToCart: (state, payload) => {
+			if (payload.quantity > 0) {
+				payload.item.quantity = payload.quantity
+				state.shoppingCart.push(payload.item)
+			}
+		},
+		updateInventoryItemInCart:(state, payload) => {
+			state.shoppingCart[payload.index].quantity = payload.quantity
+		},
+		removeInventoryItemFromCart: (state, index) => {
+			state.shoppingCart.splice(index, 1)
+		},
+		clearShoppingCart: (state) => {
+			state.shoppingCart = []
+		},
 	},
 
 	actions: {
-
-		bindInventoryItems: firestoreAction(({ bindFirestoreRef},id) => {
+		bindInventoryItems: firestoreAction(({ bindFirestoreRef }, id) => {
 			bindFirestoreRef('inventoryItems',
 				db.collection("GroceryStores").doc(id).collection("InventoryCollection").doc("Items"))
 		}),
@@ -77,7 +110,7 @@ export default new Vuex.Store({
 			}
 
 			bindFirestoreRef('activeOrders', db.collection("Orders").where(idType, "==", state.id)
-			.where('status', 'in', ['Looking for Driver', 'Driver on route for pick up', 'Inventory picked up']))
+				.where('status', 'in', ['Looking for Driver', 'Driver on route for pick up', 'Inventory picked up']))
 		}),
 
 		bindGroceryStores: firestoreAction(({ bindFirestoreRef }) => {
@@ -120,6 +153,17 @@ export default new Vuex.Store({
 			axios.post("http://localhost:5000/send-foodz-1a677/us-central1/app/groceryStore/removeInventoryItem", {
 				groceryStoreId: payload.groceryStoreId,
 				id: payload.id
+			})
+		},
+
+		postOrder(context) {
+			axios.post("http://localhost:5000/send-foodz-1a677/us-central1/app/foodBank/placeOrder", {
+				status: "Looking For Driver",
+				groceryStoreId: context.state.shoppingCartGroceryStoreId,
+				foodBankId: context.state.id,
+				inventory: context.state.shoppingCart
+			}).then(function (response) {
+				console.log(response);
 			})
 		}
 	}
