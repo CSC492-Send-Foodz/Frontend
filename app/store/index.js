@@ -19,7 +19,8 @@ export default new Vuex.Store({
 
 		shoppingCart: [],
 		shoppingCartGroceryStoreId: "",
-		showPopupStartNewShoppingCart: false
+		showPopupStartNewShoppingCart: false,
+		showCheckoutError: false
 	},
 
 	getters: {
@@ -56,7 +57,10 @@ export default new Vuex.Store({
 		},
 		getShoppingCartIndex: (state) => (id) => {
 			return state.shoppingCart.indexOf(state.shoppingCart.find(item => item.id == id))
-		}
+		},
+		getShowCheckoutError: (state) => {
+			return state.showCheckoutError
+		},
 	},
 
 	mutations: {
@@ -76,13 +80,16 @@ export default new Vuex.Store({
 		setShowPopupStartNewShoppingCart: (state, showPopupStartNewShoppingCart) => {
 			state.showPopupStartNewShoppingCart = showPopupStartNewShoppingCart
 		},
+		setShowCheckoutError: (state, showCheckoutError) => {
+			state.showCheckoutError = showCheckoutError;
+		},
 		addInventoryItemToCart: (state, payload) => {
 			if (payload.quantity > 0) {
 				payload.item.quantity = payload.quantity
 				state.shoppingCart.push(payload.item)
 			}
 		},
-		updateInventoryItemInCart:(state, payload) => {
+		updateInventoryItemInCart: (state, payload) => {
 			state.shoppingCart[payload.index].quantity = payload.quantity
 		},
 		removeInventoryItemFromCart: (state, index) => {
@@ -163,7 +170,13 @@ export default new Vuex.Store({
 				foodBankId: context.state.id,
 				inventory: context.state.shoppingCart
 			}).then(function (response) {
-				console.log(response);
+				if (response.status == 200) {
+					if (response.data.status === "Order is unable to completed") {
+						context.state.showCheckoutError = true
+					} else {
+						context.state.shoppingCart = []
+					}
+				}
 			})
 		}
 	}

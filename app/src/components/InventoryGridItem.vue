@@ -10,7 +10,7 @@
       <v-list-item-avatar tile size="80" color="grey"></v-list-item-avatar>
     </v-list-item>
     <v-card-actions>
-      <v-text-field
+      <v-text-field v-if="this.getUserType === 'Food Bank'"
         flat
         v-model="selectedQuantity"
         type="number"
@@ -19,8 +19,8 @@
         :max="totalQuantity"
         :suffix="outOf"
         oninput="if(Number(this.value) > Number(this.max)) this.value=this.max; if(Number(this.value) < Number(this.min)) this.value=this.min; "
-      ></v-text-field>
-
+       ></v-text-field>
+      
       <v-btn
         text
         v-if="this.getUserType === 'Grocery Store'"
@@ -52,7 +52,7 @@ export default {
       expirationDate: this.item.expirationDate,
       totalQuantity: this.item.quantity,
       inProgress: false,
-      selectedQuantity: 0,
+      selectedQuantity: null,
       showPopupStartNewShoppingCart: false
     };
   },
@@ -79,7 +79,7 @@ export default {
       "removeInventoryItemFromCart"
     ]),
     formatDate(value) {
-      return moment(String(value)).format("MMM Do YYYY");
+      return moment(String(value)).format("YYYY-MM-DD");
     },
 
     handleAddToCart() {

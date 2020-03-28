@@ -27,6 +27,21 @@
         <v-btn text @click="postOrder()">Checkout</v-btn>
       </v-btn>
     </div>
+    <v-dialog v-model="checkoutError" max-width="400">
+      <v-card>
+        <v-card-title class="headline white">Sorry, They're Out of Stock </v-card-title>
+        <v-divider></v-divider>
+
+        <v-card-text></v-card-text>
+
+        <v-card-subtitle class="text-left">It appears certian items in this order are currently out of stock</v-card-subtitle>
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-btn color="black" text @click="setShowCheckoutError(false)">Ok</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -36,10 +51,19 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
   computed: {
-    ...mapGetters(["getShoppingCart"])
+    ...mapGetters(["getShoppingCart", "getShowCheckoutError"]),
+    checkoutError: {
+      set(hasError) {
+        this.setShowCheckoutError(hasError);
+      },
+      get() {
+        return this.getShowCheckoutError;
+        // return this.$store.state.showCheckoutError;
+      }
+    }
   },
   methods: {
-    ...mapMutations(["removeInventoryItemFromCart"]),
+    ...mapMutations(["removeInventoryItemFromCart", "setShowCheckoutError"]),
     ...mapActions(["postOrder"])
   }
 };
