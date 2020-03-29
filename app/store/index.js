@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import PapaParse from "papaparse";
 import axios from 'axios'
 import { vuexfireMutations, firestoreAction } from 'vuexfire'
+import createPersistedState from 'vuex-persistedstate';
 import db from "../src/plugins/database"
 
 Vue.use(Vuex, axios, vuexfireMutations)
@@ -20,7 +21,9 @@ export default new Vuex.Store({
 		shoppingCart: [],
 		shoppingCartGroceryStoreId: "",
 		showPopupStartNewShoppingCart: false,
-		showCheckoutError: false
+		showCheckoutError: false,
+		showSuccessfullOrderPlace: false
+
 	},
 
 	getters: {
@@ -61,6 +64,9 @@ export default new Vuex.Store({
 		getShowCheckoutError: (state) => {
 			return state.showCheckoutError
 		},
+		getShowSuccessfullOrderPlace: (state) => {
+			return state.showSuccessfullOrderPlace
+		},
 	},
 
 	mutations: {
@@ -82,6 +88,9 @@ export default new Vuex.Store({
 		},
 		setShowCheckoutError: (state, showCheckoutError) => {
 			state.showCheckoutError = showCheckoutError;
+		},
+		setShowSuccessfullOrderPlace: (state, showSuccessfullOrderPlace) => {
+			state.showSuccessfullOrderPlace = showSuccessfullOrderPlace;
 		},
 		addInventoryItemToCart: (state, payload) => {
 			if (payload.quantity > 0) {
@@ -117,7 +126,7 @@ export default new Vuex.Store({
 			}
 
 			bindFirestoreRef('activeOrders', db.collection("Orders").where(idType, "==", state.id)
-				.where('status', 'in', ['Looking for Driver', 'Driver on route for pick up', 'Inventory picked up']))
+				.where('status', 'in', ['Looking For Driver', 'Driver on route for pick up', 'Inventory picked up']))
 		}),
 
 		bindGroceryStores: firestoreAction(({ bindFirestoreRef }) => {
@@ -173,11 +182,14 @@ export default new Vuex.Store({
 				if (response.status == 200) {
 					if (response.data.status === "Order is unable to completed") {
 						context.state.showCheckoutError = true
-					} else {
+					} 
+					else {
+						context.state.showSuccessfullOrderPlace = true
 						context.state.shoppingCart = []
 					}
 				}
 			})
 		}
-	}
+	},
+	plugins: [createPersistedState()]
 })
