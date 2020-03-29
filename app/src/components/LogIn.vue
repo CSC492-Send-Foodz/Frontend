@@ -45,7 +45,7 @@ export default {
     };
   },
   methods: {
-    ...mapMutations(["setID","setEmail","setType"])
+    ...mapMutations(["setID","setEmail","setUserType"])
   },
   mounted() {
     document.forms["login"].addEventListener("submit", event => {
