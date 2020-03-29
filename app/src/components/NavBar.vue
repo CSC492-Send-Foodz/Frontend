@@ -17,7 +17,12 @@
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
-      <v-toolbar-items class="hidden-sm-and-down">
+
+      
+      <v-toolbar-items 
+  
+      
+      class="hidden-sm-and-down">
         <v-btn
           text
           large
@@ -25,7 +30,16 @@
           :key="item.title"
           :to="item.path"
         >{{ item.title }}</v-btn>
+
+        <v-btn v-if="this.getUserType === 'Food Bank'" text :to="'/cart'">
+        <v-badge left color="black">
+          <span slot="badge">{{getOrderFromGroceryStore.length}}</span>
+          <v-icon>shopping_cart</v-icon>
+        </v-badge>
+      </v-btn>
       </v-toolbar-items>
+
+      
 
       <div class="hidden-sm-and-down px-3">|</div>
       <v-toolbar-items>
@@ -74,7 +88,8 @@ export default {
     ...mapGetters({
       getUserType: "getUserType",
       getId: "getId",
-      getEmail: "getEmail"
+      getEmail: "getEmail",
+      getOrderFromGroceryStore:"getOrderFromGroceryStore"
     }),
 
     foodBankTabs: function() {

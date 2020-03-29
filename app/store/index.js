@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import PapaParse from "papaparse";
 import axios from 'axios'
 import { vuexfireMutations, firestoreAction } from 'vuexfire'
+import createPersistedState from 'vuex-persistedstate';
 import db from "../src/plugins/database"
 
 Vue.use(Vuex, axios, vuexfireMutations)
@@ -15,12 +16,18 @@ export default new Vuex.Store({
 		inventoryItems: [],
 		groceryStores: [],
 		activeOrders: [],
-		shopingCart:[],
-		userType: "Food Bank"
+		userType: "Food Bank",
+
+		shoppingCart: [],
+		shoppingCartGroceryStoreId: "",
+		showPopupStartNewShoppingCart: false,
+		showCheckoutError: false,
+		showSuccessfullOrderPlace: false
+
 	},
 
 	getters: {
-		
+
 		getAllInventoryItems: (state) => {
 			return state.inventoryItems;
 		},
@@ -37,8 +44,29 @@ export default new Vuex.Store({
 			return state.userType
 		},
 		getEmail: (state) => {
-			return state.email;
-		}
+			return state.email
+		},
+		getOrderFromGroceryStore: (state) => {
+			return state.shoppingCart
+		},
+		getShoppingCartGroceryStoreId: (state) => {
+			return state.shoppingCartGroceryStoreId
+		},
+		getShowPopupStartNewShoppingCart: (state) => {
+			return state.showPopupStartNewShoppingCart
+		},
+		getShoppingCart: (state) => {
+			return state.shoppingCart
+		},
+		getShoppingCartIndex: (state) => (id) => {
+			return state.shoppingCart.indexOf(state.shoppingCart.find(item => item.id == id))
+		},
+		getShowCheckoutError: (state) => {
+			return state.showCheckoutError
+		},
+		getShowSuccessfullOrderPlace: (state) => {
+			return state.showSuccessfullOrderPlace
+		},
 	},
 
 	mutations: {
@@ -52,16 +80,37 @@ export default new Vuex.Store({
 		setUserType: (state, type) => {
 			state.type = type;
 		},
-		addInventoryItemToCart: (state, item) => {
-			state.shopingCart.push(item)
-			console.log("groceryStoreId: " + item.groceryStoreId + " itemId: " + item.id)
-		}
-
+		setShoppingCartGroceryStoreId: (state, shoppingCartGroceryStoreId) => {
+			state.shoppingCartGroceryStoreId = shoppingCartGroceryStoreId
+		},
+		setShowPopupStartNewShoppingCart: (state, showPopupStartNewShoppingCart) => {
+			state.showPopupStartNewShoppingCart = showPopupStartNewShoppingCart
+		},
+		setShowCheckoutError: (state, showCheckoutError) => {
+			state.showCheckoutError = showCheckoutError;
+		},
+		setShowSuccessfullOrderPlace: (state, showSuccessfullOrderPlace) => {
+			state.showSuccessfullOrderPlace = showSuccessfullOrderPlace;
+		},
+		addInventoryItemToCart: (state, payload) => {
+			if (payload.quantity > 0) {
+				payload.item.quantity = payload.quantity
+				state.shoppingCart.push(payload.item)
+			}
+		},
+		updateInventoryItemInCart: (state, payload) => {
+			state.shoppingCart[payload.index].quantity = payload.quantity
+		},
+		removeInventoryItemFromCart: (state, index) => {
+			state.shoppingCart.splice(index, 1)
+		},
+		clearShoppingCart: (state) => {
+			state.shoppingCart = []
+		},
 	},
 
 	actions: {
-
-		bindInventoryItems: firestoreAction(({ bindFirestoreRef},id) => {
+		bindInventoryItems: firestoreAction(({ bindFirestoreRef }, id) => {
 			bindFirestoreRef('inventoryItems',
 				db.collection("GroceryStores").doc(id).collection("InventoryCollection").doc("Items"))
 		}),
@@ -77,7 +126,7 @@ export default new Vuex.Store({
 			}
 
 			bindFirestoreRef('activeOrders', db.collection("Orders").where(idType, "==", state.id)
-			.where('status', 'in', ['Looking for Driver', 'Driver on route for pick up', 'Inventory picked up']))
+				.where('status', 'in', ['Looking For Driver', 'Driver on route for pick up', 'Inventory picked up']))
 		}),
 
 		bindGroceryStores: firestoreAction(({ bindFirestoreRef }) => {
@@ -121,6 +170,26 @@ export default new Vuex.Store({
 				groceryStoreId: payload.groceryStoreId,
 				id: payload.id
 			})
+		},
+
+		postOrder(context) {
+			axios.post("http://localhost:5000/send-foodz-1a677/us-central1/app/foodBank/placeOrder", {
+				status: "Looking For Driver",
+				groceryStoreId: context.state.shoppingCartGroceryStoreId,
+				foodBankId: context.state.id,
+				inventory: context.state.shoppingCart
+			}).then(function (response) {
+				if (response.status == 200) {
+					if (response.data.status === "Order is unable to completed") {
+						context.state.showCheckoutError = true
+					} 
+					else {
+						context.state.showSuccessfullOrderPlace = true
+						context.state.shoppingCart = []
+					}
+				}
+			})
 		}
-	}
+	},
+	plugins: [createPersistedState()]
 })

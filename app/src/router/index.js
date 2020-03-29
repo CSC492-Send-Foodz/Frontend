@@ -33,6 +33,11 @@ const routes = [
         path: "/orders",
         name: "orders",
         component: () => import("../views/ActiveOrders.vue")
+    },
+    {
+        path: "/cart",
+        name: "cart",
+        component: () => import("../components/Cart.vue")
     }
 ];
 

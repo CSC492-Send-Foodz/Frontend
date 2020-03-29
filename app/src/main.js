@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import 'material-design-icons-iconfont/dist/material-design-icons.css' 
 import router from "./router";
 import vuetify from './plugins/vuetify';
 import store from "../store/index.js";
