@@ -8,25 +8,25 @@ import db from "../src/plugins/database"
 
 Vue.use(Vuex, axios, vuexfireMutations)
 
-export default new Vuex.Store({
+var store = new Vuex.Store({
 
 	state: {
 		id: "8054",
 		email: "",
+		token: "",
+		tokenExpiry: new Date(),
 		inventoryItems: [],
 		groceryStores: [],
 		activeOrders: [],
-		userType: "Food Bank",
-
-		shoppingCart: [],
-		shoppingCartGroceryStoreId: "",
-		showPopupStartNewShoppingCart: false,
-		showCheckoutError: false,
-		showSuccessfullOrderPlace: false
-
+		shopingCart: [],
+		userType: "Grocery Store"
 	},
 
+
 	getters: {
+		getFoodBankOrders: (state) => {
+			return state.foodbankOrders
+		},
 
 		getAllInventoryItems: (state) => {
 			return state.inventoryItems;
@@ -71,7 +71,7 @@ export default new Vuex.Store({
 
 	mutations: {
 		...vuexfireMutations,
-		setID: (state, id) => {
+		setId: (state, id) => {
 			state.id = id;
 		},
 		setEmail: (state, email) => {
@@ -112,7 +112,7 @@ export default new Vuex.Store({
 	actions: {
 		bindInventoryItems: firestoreAction(({ bindFirestoreRef }, id) => {
 			bindFirestoreRef('inventoryItems',
-				db.collection("GroceryStores").doc(id).collection("InventoryCollection").doc("Items"))
+				db.firestore().collection("GroceryStores").doc(id).collection("InventoryCollection").doc("Items"))
 		}),
 
 
@@ -124,20 +124,21 @@ export default new Vuex.Store({
 			else if (state.userType === "Food Bank") {
 				idType = "foodBankId"
 			}
-
-			bindFirestoreRef('activeOrders', db.collection("Orders").where(idType, "==", state.id)
-				.where('status', 'in', ['Looking For Driver', 'Driver on route for pick up', 'Inventory picked up']))
+			bindFirestoreRef('activeOrders', db.firestore().collection("Orders").where(idType, "==", state.id))
 		}),
 
 		bindGroceryStores: firestoreAction(({ bindFirestoreRef }) => {
 			bindFirestoreRef('groceryStores',
-				db.collection("GroceryStores"))
+				db.firestore().collection("GroceryStores"))
 		}),
 
 		updateOrderStatus: firestoreAction((context, payload) => {
-			axios.post("http://localhost:5000/send-foodz-1a677/us-central1/app/order/statusUpdate", {
+
+			axios.post("https://us-central1-send-foodz-1a677.cloudfunctions.net/app/order/statusUpdate", {
 				id: payload.id,
 				status: payload.status
+			}).catch(error => {
+				console.log(error.response);
 			})
 		}),
 
@@ -156,19 +157,23 @@ export default new Vuex.Store({
 								expirationDate: resultData[5]
 							})
 						})
-						axios.post("http://localhost:5000/send-foodz-1a677/us-central1/app/groceryStore/updateInventory", {
+						axios.post("https://us-central1-send-foodz-1a677.cloudfunctions.net/app/groceryStore/updateInventory", {
 							groceryStoreId: context.state.id,
 							ediOrderNumber: "124AZ",
 							inventory: items
+						}).catch(error => {
+							console.log(error.response);
 						})
 					}
 				});
 			}
 		},
 		deleteInventoryItems(context, payload) {
-			axios.post("http://localhost:5000/send-foodz-1a677/us-central1/app/groceryStore/removeInventoryItem", {
+			axios.post("https://us-central1-send-foodz-1a677.cloudfunctions.net/app/groceryStore/removeInventoryItem", {
 				groceryStoreId: payload.groceryStoreId,
 				id: payload.id
+			}).catch(error => {
+				console.log(error.response);
 			})
 		},
 
@@ -193,3 +198,14 @@ export default new Vuex.Store({
 	},
 	plugins: [createPersistedState()]
 })
+
+axios.interceptors.request.use(async config => {
+	if(new Date().getTime()>store.state.tokenExpiry.getTime()){
+		await db.refreshToken();
+	}
+	const token = store.state.token;
+	config.headers.Authorization = "Bearer " + token;
+	return config;
+});
+
+export default store
