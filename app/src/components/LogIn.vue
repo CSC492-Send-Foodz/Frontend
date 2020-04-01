@@ -28,7 +28,6 @@
   </v-container>
 </template>
 <script>
-import { mapMutations } from "vuex";
 import firebase from "../plugins/database";
 
 export default {
