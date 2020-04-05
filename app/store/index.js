@@ -210,10 +210,7 @@ var store = new Vuex.Store({
 			}
 			console.log("Data: ", data);
 			console.log("URL: ",url);
-			axios.post(url, data)
-				.catch(error => {
-					console.log(error);
-				});
+			return axios.post(url, data);
 		}, postCheckAccountType(context, id) {
 			return axios.post(BASE_URL + "/auth/checkUserType", {
 				id: id,
@@ -225,7 +222,7 @@ var store = new Vuex.Store({
 })
 
 axios.interceptors.request.use(async config => {
-	if (store.state.tokenExpiry!==undefined && new Date().getTime() > store.state.tokenExpiry.getTime()) {
+	if ((store.state.tokenExpiry!==undefined && new Date().getTime() > store.state.tokenExpiry.getTime()) || store.state.token==="") {
 		await db.refreshToken();
 	}
 	const token = store.state.token;
