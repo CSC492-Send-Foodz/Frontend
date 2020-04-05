@@ -20,7 +20,14 @@ var store = new Vuex.Store({
 		inventoryItems: [],
 		groceryStores: [],
 		activeOrders: [],
-		userType: "Grocery Store"
+		userType: "Grocery Store",
+		shoppingCart: [],
+		shoppingCartGroceryStoreId: "",
+		showPopupStartNewShoppingCart: false,
+		showCheckoutError: false,
+		showSuccessfullOrderPlace: false
+
+
 	},
 
 
