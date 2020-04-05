@@ -5,12 +5,7 @@
         <h1>Log In</h1>
       </v-flex>
       <v-flex xs12 sm6 offset-sm3 mt-3>
-        <form
-          id="login"
-          action="http://localhost:5000/send-foodz-1a677/us-central1/app/login/authenticate"
-          method="post"
-          enctype="application/x-www-form-urlencoded"
-        >
+        <form id="login">
           <v-layout column>
             <v-flex>
               <v-text-field name="email" label="Email" id="email" type="email" required></v-text-field>
@@ -32,10 +27,9 @@
     </v-layout>
   </v-container>
 </template>
-
 <script>
 import { mapMutations } from "vuex";
-import router from "../router/index";
+import firebase from "../plugins/database";
 
 export default {
   data() {
@@ -45,35 +39,20 @@ export default {
     };
   },
   methods: {
-    ...mapMutations(["setID","setEmail","setUserType"])
+    ...mapMutations(["setUserType"])
   },
   mounted() {
-    document.forms["login"].addEventListener("submit", event => {
+    document.forms["login"].addEventListener("submit", async event => {
       event.preventDefault();
       this.inProgress = true;
-      fetch(event.target.action, {
-        method: "POST",
-        body: new URLSearchParams(new FormData(event.target))
-      })
-        .then(resp => {
-          return resp.json();
-        })
-        .then(body => {
-          if (body.message.startsWith("ERROR: ")) {
-            this.message = body.message.substring(7);
-          } else {
-            this.setID(body.id);
-            this.setEmail(body.email);
-            this.setType(body.type);
-            router.push("../")
-          }
-          this.inProgress = false;
-        })
-        .catch(error => {
-          this.message = "Something went wrong. Try agian Later";
-          this.inProgress = false;
-          console.log(error);
-        });
+      var res = await firebase.signin(
+        event.target.email.value,
+        event.target.password.value
+      );
+      if (res !== undefined && !res.startsWith("{")) {
+        this.message = res;
+      }
+      this.inProgress = false;
     });
   }
 };

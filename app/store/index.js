@@ -8,26 +8,30 @@ import db from "../src/plugins/database"
 
 Vue.use(Vuex, axios, vuexfireMutations)
 
-export default new Vuex.Store({
+const BASE_URL = "https://us-central1-send-foodz-1a677.cloudfunctions.net/app";
+
+var store = new Vuex.Store({
 
 	state: {
 		id: "8054",
 		email: "",
+		token: "",
+		tokenExpiry: new Date(),
 		inventoryItems: [],
 		groceryStores: [],
 		activeOrders: [],
-		userType: "Food Bank",
-
+		userType: "Grocery Store",
 		shoppingCart: [],
 		shoppingCartGroceryStoreId: "",
 		showPopupStartNewShoppingCart: false,
 		showCheckoutError: false,
 		showSuccessfullOrderPlace: false
 
+
 	},
 
-	getters: {
 
+	getters: {
 		getAllInventoryItems: (state) => {
 			return state.inventoryItems;
 		},
@@ -71,14 +75,14 @@ export default new Vuex.Store({
 
 	mutations: {
 		...vuexfireMutations,
-		setID: (state, id) => {
+		setId: (state, id) => {
 			state.id = id;
 		},
 		setEmail: (state, email) => {
 			state.email = email;
 		},
 		setUserType: (state, type) => {
-			state.type = type;
+			state.userType = type;
 		},
 		setShoppingCartGroceryStoreId: (state, shoppingCartGroceryStoreId) => {
 			state.shoppingCartGroceryStoreId = shoppingCartGroceryStoreId
@@ -112,7 +116,7 @@ export default new Vuex.Store({
 	actions: {
 		bindInventoryItems: firestoreAction(({ bindFirestoreRef }, id) => {
 			bindFirestoreRef('inventoryItems',
-				db.collection("GroceryStores").doc(id).collection("InventoryCollection").doc("Items"))
+				db.firestore().collection("GroceryStores").doc(id).collection("InventoryCollection").doc("Items"))
 		}),
 
 
@@ -124,20 +128,22 @@ export default new Vuex.Store({
 			else if (state.userType === "Food Bank") {
 				idType = "foodBankId"
 			}
-
 			bindFirestoreRef('activeOrders', db.collection("Orders").where(idType, "==", state.id)
 				.where('status', 'in', ['Looking For Driver', 'Driver on route for pick up', 'Inventory picked up']))
 		}),
 
 		bindGroceryStores: firestoreAction(({ bindFirestoreRef }) => {
 			bindFirestoreRef('groceryStores',
-				db.collection("GroceryStores"))
+				db.firestore().collection("GroceryStores"))
 		}),
 
 		updateOrderStatus: firestoreAction((context, payload) => {
-			axios.post("http://localhost:5000/send-foodz-1a677/us-central1/app/order/statusUpdate", {
+
+			axios.post(BASE_URL + "/order/statusUpdate", {
 				id: payload.id,
 				status: payload.status
+			}).catch(error => {
+				console.log(error.response);
 			})
 		}),
 
@@ -156,24 +162,28 @@ export default new Vuex.Store({
 								expirationDate: resultData[5]
 							})
 						})
-						axios.post("http://localhost:5000/send-foodz-1a677/us-central1/app/groceryStore/updateInventory", {
+						axios.post(BASE_URL + "/groceryStore/updateInventory", {
 							groceryStoreId: context.state.id,
 							ediOrderNumber: "124AZ",
 							inventory: items
+						}).catch(error => {
+							console.log(error.response);
 						})
 					}
 				});
 			}
 		},
 		deleteInventoryItems(context, payload) {
-			axios.post("http://localhost:5000/send-foodz-1a677/us-central1/app/groceryStore/removeInventoryItem", {
+			axios.post(BASE_URL + "/groceryStore/removeInventoryItem", {
 				groceryStoreId: payload.groceryStoreId,
 				id: payload.id
+			}).catch(error => {
+				console.log(error.response);
 			})
 		},
 
 		postOrder(context) {
-			axios.post("http://localhost:5000/send-foodz-1a677/us-central1/app/foodBank/placeOrder", {
+			axios.post(BASE_URL + "/foodBank/placeOrder", {
 				status: "Looking For Driver",
 				groceryStoreId: context.state.shoppingCartGroceryStoreId,
 				foodBankId: context.state.id,
@@ -182,14 +192,49 @@ export default new Vuex.Store({
 				if (response.status == 200) {
 					if (response.data.status === "Order is unable to completed") {
 						context.state.showCheckoutError = true
-					} 
+					}
 					else {
 						context.state.showSuccessfullOrderPlace = true
 						context.state.shoppingCart = []
 					}
 				}
 			})
+		}, postAccountUpdate(context, [type, id, name, number, address]) {
+			var url = BASE_URL
+			var data = {
+				id: id,
+				address: address
+			};
+			console.log("Type: ",type);
+			if (type === "Food Bank") {
+				url += "/foodBank/updateUserAccount";
+				data.name = name;
+				data.locationId = number;
+			} else if (type === "Grocery Store") {
+				url += "/groceryStore/updateUserAccount";
+				data.company = name;
+				data.storeNumber = number;
+			}
+			console.log("Data: ", data);
+			console.log("URL: ",url);
+			return axios.post(url, data);
+		}, postCheckAccountType(context, id) {
+			return axios.post(BASE_URL + "/auth/checkUserType", {
+				id: id,
+				type: context.type === "Food Bank" ? "Foodbanks" : "GroceryStores"
+			});
 		}
 	},
 	plugins: [createPersistedState()]
 })
+
+axios.interceptors.request.use(async config => {
+	if ((store.state.tokenExpiry!==undefined && new Date().getTime() > store.state.tokenExpiry.getTime()) || store.state.token==="") {
+		await db.refreshToken();
+	}
+	const token = store.state.token;
+	config.headers.Authorization = "Bearer " + token;
+	return config;
+});
+
+export default store

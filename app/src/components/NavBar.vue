@@ -49,22 +49,22 @@
           v-for="profileItem in profileItems"
           :key="profileItem.title"
           :to="profileItem.path"
+          v-show="getId===''"
         >{{ profileItem.title }}</v-btn>
 
-        <!-- v-show="getID===-1" -->
-        <!-- <v-menu offset-y :open-on-hover="true">
+        <v-menu offset-y :open-on-hover="true">
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" v-show="getID!==-1">
+            <v-btn v-on="on" v-show="getId!==''">
               <div>
-                <h3>{{getEmail}}</h3>
-                <div style="font-size: 75%">{{getType}}</div>
+                {{getEmail}}
+                <div style="font-size: 75%">{{getUserType}}</div>
               </div>
             </v-btn>
           </template>
           <v-list>
             <v-list-item @click="logout">Logout</v-list-item>
           </v-list>
-        </v-menu>-->
+        </v-menu>
       </v-toolbar-items>
     </v-app-bar>
   </div>
@@ -73,6 +73,9 @@
 
 <script>
 import { mapGetters } from "vuex";
+import firebase from "../plugins/database";
+import router from "../router/index";
+
 export default {
   data() {
     return {
@@ -119,16 +122,13 @@ export default {
         ? this.foodBankTabs
         : this.groceryStoreTabs;
     }
+  },
+  methods: {
+    logout() {
+      firebase.signout();
+      router.push("login");
+    }
   }
-  // methods: {
-  // ...mapMutations(["setID","setEmail","setType"]),
-  // logout() {
-  //   this.setID(-1);
-  //   this.setEmail("");
-  //   this.setType("");
-  //   // router.push("Login");
-  // }
-  // }
 };
 </script>
 
