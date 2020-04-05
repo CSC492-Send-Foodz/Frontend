@@ -28,6 +28,7 @@
   </v-container>
 </template>
 <script>
+import { mapMutations } from "vuex";
 import firebase from "../plugins/database";
 
 export default {
@@ -37,14 +38,20 @@ export default {
       inProgress: false
     };
   },
+  methods: {
+    ...mapMutations(["setUserType"])
+  },
   mounted() {
     document.forms["login"].addEventListener("submit", async event => {
       event.preventDefault();
       this.inProgress = true;
-      this.message = await firebase.signin(
+      var res = await firebase.signin(
         event.target.email.value,
         event.target.password.value
       );
+      if (res !== undefined && !res.startsWith("{")) {
+        this.message = res;
+      }
       this.inProgress = false;
     });
   }

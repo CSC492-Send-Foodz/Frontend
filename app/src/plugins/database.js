@@ -22,36 +22,55 @@ const firebaseConfig = {
 
 const database = firebase.initializeApp(firebaseConfig)
 
-database.auth().onAuthStateChanged(user => {
+database.auth().onAuthStateChanged(async user => {
   if (user) {
-    store.state.id = user.uid;
-    store.state.email = user.email;
-    firebase
-      .auth()
-      .currentUser.getIdToken(true)
-      .then(token => {
+
+    var currentUser = firebase.auth().currentUser;
+
+    await currentUser.getIdToken(true)
+      .then(async token => {
         store.state.token = token;
-        var date = new Date;
+        var date = new Date();
         date.setHours(date.getHours() + 1);
         store.state.tokenExpiry = date;
       });
-    router.push("../");
+
+    store.state.id = user.uid;
+    store.state.email = user.email;
+
+    if (currentUser.metadata.creationTime !== currentUser.metadata.lastSignInTime) {
+      await store.dispatch("postCheckAccountType", user.uid).then(async response => {
+        console.log(response.data);
+        if (response.data !== store.state.userType) {
+          store.state.userType=response.data==="GroceryStores"?"Grocery Store":"Food Bank";
+        }
+      }).catch(error => {
+        console.log(error);
+        signout();
+      });
+    }
+
+    if (router.currentRoute.name === "login"||router.currentRoute.name==="signup") {
+      router.push(store.state.userType === "Grocery Store" ? {name:"inventory",params:{id:user.uid}} : {name:"availableGroceryStores"});
+    }
   } else {
     store.state.id = "";
     store.state.email = "";
     store.state.token = "";
+    if (router.currentRoute.name !== "login") {
+      router.push({ name: "login" });
+    }
     console.log("logout");
   }
 });
 
 async function signin(email, password) {
-  return database.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION).then(async function () {
+  database.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION).then(async function () {
     return database.auth().signInWithEmailAndPassword(email, password)
       .catch(error => {
         if (error.code === "auth/wrong-password") {
           return "Login Failed";
         } else {
-          console.log(error.message);
           return "Something went wrong. Try again later";
         }
       });

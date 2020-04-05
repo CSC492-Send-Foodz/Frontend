@@ -8,6 +8,8 @@ import db from "../src/plugins/database"
 
 Vue.use(Vuex, axios, vuexfireMutations)
 
+const BASE_URL = "https://us-central1-send-foodz-1a677.cloudfunctions.net/app";
+
 var store = new Vuex.Store({
 
 	state: {
@@ -18,16 +20,11 @@ var store = new Vuex.Store({
 		inventoryItems: [],
 		groceryStores: [],
 		activeOrders: [],
-		shopingCart: [],
 		userType: "Grocery Store"
 	},
 
 
 	getters: {
-		getFoodBankOrders: (state) => {
-			return state.foodbankOrders
-		},
-
 		getAllInventoryItems: (state) => {
 			return state.inventoryItems;
 		},
@@ -78,7 +75,7 @@ var store = new Vuex.Store({
 			state.email = email;
 		},
 		setUserType: (state, type) => {
-			state.type = type;
+			state.userType = type;
 		},
 		setShoppingCartGroceryStoreId: (state, shoppingCartGroceryStoreId) => {
 			state.shoppingCartGroceryStoreId = shoppingCartGroceryStoreId
@@ -124,7 +121,8 @@ var store = new Vuex.Store({
 			else if (state.userType === "Food Bank") {
 				idType = "foodBankId"
 			}
-			bindFirestoreRef('activeOrders', db.firestore().collection("Orders").where(idType, "==", state.id))
+			bindFirestoreRef('activeOrders', db.collection("Orders").where(idType, "==", state.id)
+				.where('status', 'in', ['Looking For Driver', 'Driver on route for pick up', 'Inventory picked up']))
 		}),
 
 		bindGroceryStores: firestoreAction(({ bindFirestoreRef }) => {
@@ -134,7 +132,7 @@ var store = new Vuex.Store({
 
 		updateOrderStatus: firestoreAction((context, payload) => {
 
-			axios.post("https://us-central1-send-foodz-1a677.cloudfunctions.net/app/order/statusUpdate", {
+			axios.post(BASE_URL + "/order/statusUpdate", {
 				id: payload.id,
 				status: payload.status
 			}).catch(error => {
@@ -157,7 +155,7 @@ var store = new Vuex.Store({
 								expirationDate: resultData[5]
 							})
 						})
-						axios.post("https://us-central1-send-foodz-1a677.cloudfunctions.net/app/groceryStore/updateInventory", {
+						axios.post(BASE_URL + "/groceryStore/updateInventory", {
 							groceryStoreId: context.state.id,
 							ediOrderNumber: "124AZ",
 							inventory: items
@@ -169,7 +167,7 @@ var store = new Vuex.Store({
 			}
 		},
 		deleteInventoryItems(context, payload) {
-			axios.post("https://us-central1-send-foodz-1a677.cloudfunctions.net/app/groceryStore/removeInventoryItem", {
+			axios.post(BASE_URL + "/groceryStore/removeInventoryItem", {
 				groceryStoreId: payload.groceryStoreId,
 				id: payload.id
 			}).catch(error => {
@@ -178,7 +176,7 @@ var store = new Vuex.Store({
 		},
 
 		postOrder(context) {
-			axios.post("http://localhost:5000/send-foodz-1a677/us-central1/app/foodBank/placeOrder", {
+			axios.post(BASE_URL + "/foodBank/placeOrder", {
 				status: "Looking For Driver",
 				groceryStoreId: context.state.shoppingCartGroceryStoreId,
 				foodBankId: context.state.id,
@@ -187,20 +185,47 @@ var store = new Vuex.Store({
 				if (response.status == 200) {
 					if (response.data.status === "Order is unable to completed") {
 						context.state.showCheckoutError = true
-					} 
+					}
 					else {
 						context.state.showSuccessfullOrderPlace = true
 						context.state.shoppingCart = []
 					}
 				}
 			})
+		}, postAccountUpdate(context, [type, id, name, number, address]) {
+			var url = BASE_URL
+			var data = {
+				id: id,
+				address: address
+			};
+			console.log("Type: ",type);
+			if (type === "Food Bank") {
+				url += "/foodBank/updateUserAccount";
+				data.name = name;
+				data.locationId = number;
+			} else if (type === "Grocery Store") {
+				url += "/groceryStore/updateUserAccount";
+				data.company = name;
+				data.storeNumber = number;
+			}
+			console.log("Data: ", data);
+			console.log("URL: ",url);
+			axios.post(url, data)
+				.catch(error => {
+					console.log(error);
+				});
+		}, postCheckAccountType(context, id) {
+			return axios.post(BASE_URL + "/auth/checkUserType", {
+				id: id,
+				type: context.type === "Food Bank" ? "Foodbanks" : "GroceryStores"
+			});
 		}
 	},
 	plugins: [createPersistedState()]
 })
 
 axios.interceptors.request.use(async config => {
-	if(new Date().getTime()>store.state.tokenExpiry.getTime()){
+	if (store.state.tokenExpiry!==undefined && new Date().getTime() > store.state.tokenExpiry.getTime()) {
 		await db.refreshToken();
 	}
 	const token = store.state.token;
