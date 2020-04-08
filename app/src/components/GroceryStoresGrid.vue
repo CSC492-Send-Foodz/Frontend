@@ -1,10 +1,15 @@
 <template>
   <div>
     <v-container>
-      <v-row justify="center" class="mx-auto" max-width="600">
-        <v-card v-for="(store, index) in getAllGroceryStores" :key="index" class="ma-2 pa-1">
-          <GroceryStoresGridItem :id="store.id" :address="store.address" :company="store.company"/>
-        </v-card>
+      <v-row mb-5 justify="center" justify-md="start" max-width="600">
+        <GroceryStoresGridItem
+          v-for="(store, index) in getAllGroceryStores"
+          :key="index"
+          class="ma-2 pa-1"
+          :id="store.id"
+          :address="store.address"
+          :company="store.company"
+        />
       </v-row>
     </v-container>
   </div>

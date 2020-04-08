@@ -9,7 +9,7 @@
     </v-navigation-drawer>
 
     <v-container fluid>
-      <v-row >
+      <v-row>
         <v-toolbar flat>
           <span class="hidden-md-and-up">
             <v-app-bar-nav-icon @click="sidebar = !sidebar"></v-app-bar-nav-icon>
@@ -18,9 +18,9 @@
           <v-toolbar-title class="brand">{{ appTitle }}</v-toolbar-title>
         </v-toolbar>
 
-        <v-col class="hidden-sm-and-down">
-          <v-tabs right grow height=60 >
-            <v-tab v-for="item in tabsMenu"  :key="item.title" :to="item.path">{{ item.title }}</v-tab>
+        <v-col p-0 class="hidden-sm-and-down">
+          <v-tabs right grow height="60">
+            <v-tab v-for="item in tabsMenu" :key="item.title" :to="item.path">{{ item.title }}</v-tab>
 
             <v-tab v-if="this.getUserType === 'Food Bank'" text :to="'/cart'">
               <v-badge left color="black">
@@ -94,7 +94,6 @@ export default {
   },
   methods: {
     logout() {
-
       firebase.signout();
       router.push("login");
     }
@@ -103,18 +102,17 @@ export default {
 </script>
 
 <style>
-#app  {
+#app {
   font-family: Product Sans;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #000000;
+  letter-spacing: 0.2em;
 }
 
 .brand {
-   font-size: 2rem!important;
-   color: #000000c4;
+  font-size: 1.5rem !important;
+  color: #000000c4;
 }
-
-
 </style>

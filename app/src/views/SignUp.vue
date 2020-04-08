@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-layout row wrap>
       <v-flex xs12 class="text-xs-center" mt-5>
-        <h1 class="font-weight-light">LETS GET STARTED</h1>
+        <h1 class="mb-5 font-weight-light">LETS GET STARTED</h1>
       </v-flex>
 
       <v-flex xs12 sm6 offset-sm3 mt-3>
@@ -10,14 +10,8 @@
           <v-layout column>
             <v-flex>
               <v-btn-toggle mandatory v-model="toggle" tile>
-                <v-btn outlined x-large class="btn-outline" color="primary" value="left">As a Store</v-btn>
-                <v-btn
-                  outlined
-                  x-large
-                  class="btn-outline"
-                  color="primary"
-                  value="right"
-                >As a Charity</v-btn>
+                <v-btn outlined large class="btn-outline" color="primary" value="left">As a Store</v-btn>
+                <v-btn outlined large class="btn-outline" color="primary" value="right">As a Charity</v-btn>
               </v-btn-toggle>
             </v-flex>
             <v-flex>
@@ -59,8 +53,9 @@
               ></v-text-field>
             </v-flex>
             <div v-show="message!==''" style="color:red">{{message}}</div>
-            <v-flex class="text-xs-center" mt-5>
+            <v-flex mb-10 class="text-xs-center" mt-5>
               <v-btn
+                
                 tile
                 outlined
                 x-large

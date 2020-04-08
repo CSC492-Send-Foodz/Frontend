@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <NavBar/>
-    <v-content>
+    <v-content class="page">
      
       <router-view />
     </v-content>
@@ -17,3 +17,9 @@ export default {
   }
 };
 </script>
+<style scoped>
+.page{
+  background-color:#FDFDFD
+}
+
+</style>
