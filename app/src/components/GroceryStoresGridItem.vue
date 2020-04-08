@@ -13,13 +13,9 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
 export default {
   name: "GroceryStore",
-  props: ["id", "address", "company"],
-  methods: {
-    ...mapActions(["deleteInventoryItems"])
-  }
+  props: ["id", "address", "company"]
 };
 </script>
 

@@ -205,7 +205,6 @@ var store = new Vuex.Store({
 				id: id,
 				address: address
 			};
-			console.log("Type: ",type);
 			if (type === "Food Bank") {
 				url += "/foodBank/updateUserAccount";
 				data.name = name;
@@ -215,8 +214,6 @@ var store = new Vuex.Store({
 				data.company = name;
 				data.storeNumber = number;
 			}
-			console.log("Data: ", data);
-			console.log("URL: ",url);
 			return axios.post(url, data);
 		}, postCheckAccountType(context, id) {
 			return axios.post(BASE_URL + "/auth/checkUserType", {
@@ -229,7 +226,7 @@ var store = new Vuex.Store({
 })
 
 axios.interceptors.request.use(async config => {
-	if ((store.state.tokenExpiry!==undefined && new Date().getTime() > store.state.tokenExpiry.getTime()) || store.state.token==="") {
+	if ((store.state.tokenExpiry!== undefined && new Date().getTime() > store.state.tokenExpiry.getTime()) || store.state.token==="") {
 		await db.refreshToken();
 	}
 	const token = store.state.token;

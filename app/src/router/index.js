@@ -21,13 +21,13 @@ const routes = [
         path: "/signup",
         name: "signup",
         component: () =>
-            import("../components/SignUp.vue")
+            import("../views/SignUp.vue")
     },
     {
         path: "/login",
         name: "login",
         component: () =>
-            import("../components/LogIn.vue")
+            import("../views/LogIn.vue")
     },
     {
         path: "/orders",
@@ -37,7 +37,7 @@ const routes = [
     {
         path: "/cart",
         name: "cart",
-        component: () => import("../components/Cart.vue")
+        component: () => import("../views/Cart.vue")
     }
 ];
 
