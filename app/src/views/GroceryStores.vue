@@ -1,7 +1,7 @@
 
 <template>
   <div>
-    <h1 class=".display-4">Available Stores</h1>
+     <h1 class="my-6 font-weight-regular">AVAILABLE STORES</h1>
     <GroceryStoresGrid/>
   </div>
 </template>
