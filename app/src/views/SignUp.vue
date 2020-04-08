@@ -2,17 +2,23 @@
   <v-container fluid>
     <v-layout row wrap>
       <v-flex xs12 class="text-xs-center" mt-5>
-        <h1>Sign Up</h1>
+        <h1 class="font-weight-light">LETS GET STARTED</h1>
       </v-flex>
+
       <v-flex xs12 sm6 offset-sm3 mt-3>
         <form id="signup">
           <v-layout column>
             <v-flex>
-              <b>Sign Up as:</b>
-              <select v-model="type">
-                <option>Grocery Store</option>
-                <option>Food Bank</option>
-              </select>
+              <v-btn-toggle mandatory v-model="toggle" tile>
+                <v-btn outlined x-large class="btn-outline" color="primary" value="left">As a Store</v-btn>
+                <v-btn
+                  outlined
+                  x-large
+                  class="btn-outline"
+                  color="primary"
+                  value="right"
+                >As a Charity</v-btn>
+              </v-btn-toggle>
             </v-flex>
             <v-flex>
               <v-text-field name="email" label="Email" id="email" type="email" required></v-text-field>
@@ -30,19 +36,12 @@
               ></v-text-field>
             </v-flex>
             <v-flex>
-              <v-text-field
-                name="name"
-                label="Company Name"
-                id="name"
-                type="text"
-                v-model="name"
-                required
-              ></v-text-field>
+              <v-text-field name="name" label="Name" id="name" type="text" v-model="name" required></v-text-field>
             </v-flex>
             <v-flex>
               <v-text-field
                 name="address"
-                label="Company Address"
+                label="Address"
                 id="address"
                 type="text"
                 v-model="address"
@@ -52,7 +51,7 @@
             <v-flex>
               <v-text-field
                 name="number"
-                :label="type==='Grocery Store'?'Company Number':'Location ID'"
+                :label="'Location ID'"
                 id="number"
                 type="text"
                 v-model="number"
@@ -61,7 +60,15 @@
             </v-flex>
             <div v-show="message!==''" style="color:red">{{message}}</div>
             <v-flex class="text-xs-center" mt-5>
-              <v-btn color="primary" type="submit" name="signUp" :loading="inProgress">Sign Up</v-btn>
+              <v-btn
+                tile
+                outlined
+                x-large
+                class="btn-outline"
+                color="primary"
+                type="submit"
+                :loading="inProgress"
+              >Sign Up</v-btn>
             </v-flex>
           </v-layout>
         </form>
@@ -79,12 +86,18 @@ export default {
     return {
       message: "",
       inProgress: false,
-      type: "Grocery Store",
+      toggle: "",
       name: "",
       number: "",
       address: ""
     };
   },
+  computed: {
+    userType: function() {
+      return this.toggle === "left" ? "Grocery Store" : "Food Bank";
+    }
+  },
+
   methods: {
     ...mapMutations(["setUserType"]),
     ...mapActions(["postAccountUpdate"])
@@ -101,7 +114,7 @@ export default {
             currentUser.metadata.lastSignInTime
         ) {
           this.postAccountUpdate([
-            this.type,
+            this.userType,
             user.uid,
             this.name,
             this.number,
@@ -119,11 +132,12 @@ export default {
 
     document.forms["signup"].addEventListener("submit", async event => {
       event.preventDefault();
+
       this.inProgress = true;
       if (event.target.password.value !== event.target.confirmPassword.value) {
         this.message = "Passwords Do Not Match";
       } else {
-        this.setUserType(this.type);
+        this.setUserType(this.userType);
         this.message = await firebase.signup(
           event.target.email.value,
           event.target.password.value
