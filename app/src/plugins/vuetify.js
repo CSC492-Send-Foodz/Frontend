@@ -5,4 +5,14 @@ import 'vuetify/dist/vuetify.min.css'
 Vue.use(Vuetify);
 
 export default new Vuetify({
+    theme: {
+        themes: {
+          light: {
+            primary: '#000000',
+            secondary: '#747474',
+            action: '#EBEBEB',
+            error: '#b71c1c',
+          },
+        },
+      },
 });
