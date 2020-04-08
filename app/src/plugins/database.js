@@ -23,10 +23,9 @@ const firebaseConfig = {
 const database = firebase.initializeApp(firebaseConfig)
 
 database.auth().onAuthStateChanged(async user => {
+  
   if (user) {
-
     var currentUser = firebase.auth().currentUser;
-
     await currentUser.getIdToken(true)
       .then(async token => {
         store.state.token = token;
@@ -38,6 +37,7 @@ database.auth().onAuthStateChanged(async user => {
     store.state.id = user.uid;
     store.state.email = user.email;
 
+    
     if (currentUser.metadata.creationTime !== currentUser.metadata.lastSignInTime) {
       await store.dispatch("postCheckAccountType", user.uid).then(async response => {
         console.log(response.data);
@@ -57,10 +57,19 @@ database.auth().onAuthStateChanged(async user => {
     store.state.id = "";
     store.state.email = "";
     store.state.token = "";
+		store.state.inventoryItems = [];
+		store.state.groceryStores = [];
+		store.state.activeOrders = [];
+		store.state.userType = "";
+		store.state.shoppingCart = [];
+		store.state.shoppingCartGroceryStoreId = "";
+		store.state.showPopupStartNewShoppingCart = false;
+		store.state.showCheckoutError = false;
+    store.state.showSuccessfullOrderPlace = false;
+    
     if (router.currentRoute.name !== "login") {
       router.push({ name: "login" });
     }
-    console.log("logout");
   }
 });
 

@@ -7,66 +7,33 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar color="white" app>
-      <span class="hidden-md-and-up">
-        <v-app-bar-nav-icon @click="sidebar = !sidebar"></v-app-bar-nav-icon>
-      </span>
 
-      <v-toolbar-title>
-        <router-link to="/" tag="span" style="cursor: pointer">{{ appTitle }}</router-link>
-      </v-toolbar-title>
+    <v-container fluid>
+      <v-row >
+        <v-toolbar flat>
+          <span class="hidden-md-and-up">
+            <v-app-bar-nav-icon @click="sidebar = !sidebar"></v-app-bar-nav-icon>
+          </span>
 
-      <v-spacer></v-spacer>
+          <v-toolbar-title class="brand">{{ appTitle }}</v-toolbar-title>
+        </v-toolbar>
 
-      
-      <v-toolbar-items 
-  
-      
-      class="hidden-sm-and-down">
-        <v-btn
-          text
-          large
-          v-for="item in tabsMenu"
-          :key="item.title"
-          :to="item.path"
-        >{{ item.title }}</v-btn>
+        <v-col class="hidden-sm-and-down">
+          <v-tabs right grow height=60 >
+            <v-tab v-for="item in tabsMenu"  :key="item.title" :to="item.path">{{ item.title }}</v-tab>
 
-        <v-btn v-if="this.getUserType === 'Food Bank'" text :to="'/cart'">
-        <v-badge left color="black">
-          <span slot="badge">{{getOrderFromGroceryStore.length}}</span>
-          <v-icon>shopping_cart</v-icon>
-        </v-badge>
-      </v-btn>
-      </v-toolbar-items>
+            <v-tab v-if="this.getUserType === 'Food Bank'" text :to="'/cart'">
+              <v-badge left color="black">
+                <span slot="badge">{{getOrderFromGroceryStore.length}}</span>
+                <v-icon>shopping_cart</v-icon>
+              </v-badge>
+            </v-tab>
 
-      
-
-      <div class="hidden-sm-and-down px-3">|</div>
-      <v-toolbar-items>
-        <v-btn
-          text
-          large
-          v-for="profileItem in profileItems"
-          :key="profileItem.title"
-          :to="profileItem.path"
-          v-show="getId===''"
-        >{{ profileItem.title }}</v-btn>
-
-        <v-menu offset-y :open-on-hover="true">
-          <template v-slot:activator="{ on }">
-            <v-btn v-on="on" v-show="getId!==''">
-              <div>
-                {{getEmail}}
-                <div style="font-size: 75%">{{getUserType}}</div>
-              </div>
-            </v-btn>
-          </template>
-          <v-list>
-            <v-list-item @click="logout">Logout</v-list-item>
-          </v-list>
-        </v-menu>
-      </v-toolbar-items>
-    </v-app-bar>
+            <v-tab v-if="getId!==''" @click="logout">Logout</v-tab>
+          </v-tabs>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 
@@ -79,11 +46,18 @@ import router from "../router/index";
 export default {
   data() {
     return {
-      appTitle: "Send Foodz",
+      appTitle: "SEND FOODZ",
       sidebar: false,
       profileItems: [
         { title: "Sign Up", path: "/signup" },
         { title: "Log In", path: "/login" }
+      ],
+      foodBankTabs: [
+        { title: "Stores", path: "/available-grocery-stores" },
+        {
+          title: " Active Orders",
+          path: "/orders"
+        }
       ]
     };
   },
@@ -92,18 +66,9 @@ export default {
       getUserType: "getUserType",
       getId: "getId",
       getEmail: "getEmail",
-      getOrderFromGroceryStore:"getOrderFromGroceryStore"
+      getOrderFromGroceryStore: "getOrderFromGroceryStore"
     }),
 
-    foodBankTabs: function() {
-      return [
-        { title: "Stores", path: "/available-grocery-stores" },
-        {
-          title: " Active Orders",
-          path: "/orders"
-        }
-      ];
-    },
     groceryStoreTabs: function() {
       return [
         {
@@ -118,13 +83,18 @@ export default {
     },
 
     tabsMenu: function() {
-      return this.getUserType === "Food Bank"
-        ? this.foodBankTabs
-        : this.groceryStoreTabs;
+      if (this.getUserType === "Food Bank") {
+        return this.foodBankTabs;
+      } else if (this.getUserType === "Grocery Store") {
+        return this.groceryStoreTabs;
+      } else {
+        return this.profileItems;
+      }
     }
   },
   methods: {
     logout() {
+
       firebase.signout();
       router.push("login");
     }
@@ -133,12 +103,18 @@ export default {
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+#app  {
+  font-family: Product Sans;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  color: #000000;
 }
+
+.brand {
+   font-size: 2rem!important;
+   color: #000000c4;
+}
+
+
 </style>

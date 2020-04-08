@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-layout row wrap>
       <v-flex xs12 class="text-xs-center" mt-5>
-        <h1>Log In</h1>
+        <h1 class="font-weight-light">WELCOME</h1>
       </v-flex>
       <v-flex xs12 sm6 offset-sm3 mt-3>
         <form id="login">
@@ -19,7 +19,15 @@
             >Account Successfully Created</h3>
             <div v-show="message!==''" style="color:red">{{message}}</div>
             <v-flex class="text-xs-center" mt-5>
-              <v-btn color="primary" type="submit" :loading="inProgress">Sign In</v-btn>
+              <v-btn
+                tile
+                outlined
+                x-large
+                class="btn-outline"
+                color="primary"
+                type="submit"
+                :loading="inProgress"
+              >Log In</v-btn>
             </v-flex>
           </v-layout>
         </form>
@@ -28,7 +36,6 @@
   </v-container>
 </template>
 <script>
-import { mapMutations } from "vuex";
 import firebase from "../plugins/database";
 
 export default {
@@ -37,9 +44,6 @@ export default {
       message: "",
       inProgress: false
     };
-  },
-  methods: {
-    ...mapMutations(["setUserType"])
   },
   mounted() {
     document.forms["login"].addEventListener("submit", async event => {
@@ -57,3 +61,9 @@ export default {
   }
 };
 </script>
+
+<style>
+.btn-outline {
+  border-color: #ebebeb;
+}
+</style>

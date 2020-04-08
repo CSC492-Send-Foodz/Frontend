@@ -13,21 +13,19 @@ const BASE_URL = "https://us-central1-send-foodz-1a677.cloudfunctions.net/app";
 var store = new Vuex.Store({
 
 	state: {
-		id: "8054",
+		id: "",
 		email: "",
 		token: "",
 		tokenExpiry: new Date(),
 		inventoryItems: [],
 		groceryStores: [],
 		activeOrders: [],
-		userType: "Grocery Store",
+		userType: "",
 		shoppingCart: [],
 		shoppingCartGroceryStoreId: "",
 		showPopupStartNewShoppingCart: false,
 		showCheckoutError: false,
 		showSuccessfullOrderPlace: false
-
-
 	},
 
 
