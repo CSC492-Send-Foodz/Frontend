@@ -93,7 +93,6 @@ export default {
     firebase.database.auth().onAuthStateChanged(async user => {
       if (user) {
         var currentUser = firebase.database.auth().currentUser;
-        console.log(this.name,this.number,this.address);
         if (
           this.name !== "" &&
           this.number !== "" &&
@@ -109,10 +108,10 @@ export default {
             this.address
           ])
             .then(response => {
-              console.log(response.data);
+              console.log("Response", response.data);
             })
             .catch(error => {
-              console.log(error);
+              console.log("Error", error);
             });
         }
       }
