@@ -10,6 +10,7 @@ export default new Vuetify({
           light: {
             primary: '#000000',
             secondary: '#747474',
+            background: '#FDFDFD',
             action: '#EBEBEB',
             error: '#b71c1c',
           },
