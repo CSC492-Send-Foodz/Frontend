@@ -1,42 +1,57 @@
 
 <template>
-  <div>
-    <v-list-item three-line>
-      <v-list-item-content>
-        <div class="overline mb-4">{{brand}}</div>
-        <v-list-item-title class="headline mb-1">{{name}}</v-list-item-title>
-        <v-list-item-subtitle>Exp: {{formatDate(expirationDate)}}</v-list-item-subtitle>
-      </v-list-item-content>
-      <v-list-item-avatar tile size="80" color="grey"></v-list-item-avatar>
-    </v-list-item>
-    <v-card-actions>
-      <v-text-field v-if="this.getUserType === 'Food Bank'"
-        flat
-        v-model="selectedQuantity"
-        type="number"
-        solo
-        min="0"
-        :max="totalQuantity"
-        :suffix="outOf"
-        oninput="if(Number(this.value) > Number(this.max)) this.value=this.max; if(Number(this.value) < Number(this.min)) this.value=this.min; "
-       ></v-text-field>
-      
-      <v-btn
-        text
-        v-if="this.getUserType === 'Grocery Store'"
-        @click="deleteInventoryItems({groceryStoreId : groceryStoreId, id: id })"
-      >Remove</v-btn>
-      <v-btn
-        text
-        v-else-if="isInShoppingCart"
-        @click="selectedQuantity == 0 ? 
+  <div class="py-12 px-5">
+    <div class="profile-box">
+      <v-avatar class="expireDate" py-12 color="primary" size="100">
+        <span class="white--text">
+          <div>{{expDateFormated[0]}}</div>
+          <div>{{expDateFormated[2]}}</div>
+          <div>{{expDateFormated[3]}}</div>
+        </span>
+      </v-avatar>
+      <div class="pt-5 pb-2 name">{{name}}</div>
+      <div class="pb-3 itemBrand">{{brand}}</div>
+
+      <div v-if="this.getUserType === 'Food Bank'">
+        <v-select class="inputBox" v-model="selectedQuantity" :items="numa" dark flat solo></v-select>
+        <v-btn
+          v-if="isInShoppingCart"
+          tile
+          outlined
+          medium
+          class="btn-outline buttonAdd"
+          @click="selectedQuantity == 0 ? 
         removeInventoryItemFromCart(getShoppingCartIndex(id)) :
         updateInventoryItemInCart({index:getShoppingCartIndex(id), quantity: selectedQuantity})"
-      >Update Cart</v-btn>
-      <v-btn text v-else @click="handleAddToCart()">Add To Cart</v-btn>
-    </v-card-actions>
+        >Update Cart</v-btn>
+
+        <v-btn
+          v-else
+          tile
+          outlined
+          medium
+          class="btn-outline buttonAdd"
+          @click="handleAddToCart()"
+        >Add To Cart</v-btn>
+      </div>
+
+      <div v-else-if="this.getUserType === 'Grocery Store'">
+        <div class="py-2">Stock: {{totalQuantity}}</div>
+        <v-btn
+          v-if="this.getUserType === 'Grocery Store'"
+          tile
+          outlined
+          medium
+          class="btn-outline buttonRemove"
+          @click="deleteInventoryItems({groceryStoreId : groceryStoreId, id: id })"
+        >Remove</v-btn>
+      </div>
+    </div>
   </div>
 </template>
+
+
+
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import moment from "moment";
@@ -52,7 +67,7 @@ export default {
       expirationDate: this.item.expirationDate,
       totalQuantity: this.item.quantity,
       inProgress: false,
-      selectedQuantity: null,
+      selectedQuantity: 0,
       showPopupStartNewShoppingCart: false
     };
   },
@@ -62,11 +77,21 @@ export default {
       "getShoppingCartGroceryStoreId",
       "getShoppingCartIndex"
     ]),
-    outOf() {
-      return "/" + this.totalQuantity;
+    numa() {
+      var list = [];
+      for (var i = 0; i <= this.totalQuantity; i++) {
+        list.push(i);
+      }
+      return list;
     },
     isInShoppingCart() {
       return this.getShoppingCartIndex(this.id) != -1;
+    },
+    expDateFormated() {
+      return moment(String(this.expirationDate))
+        .format("MMM  D YYYY")
+        .toUpperCase()
+        .split(" ");
     }
   },
   methods: {
@@ -78,9 +103,6 @@ export default {
       "updateInventoryItemInCart",
       "removeInventoryItemFromCart"
     ]),
-    formatDate(value) {
-      return moment(String(value)).format("YYYY-MM-DD");
-    },
 
     handleAddToCart() {
       if (this.getShoppingCartGroceryStoreId == "") {
@@ -102,4 +124,45 @@ export default {
 </script>
 
 <style scoped>
+.expireDate {
+  box-shadow: 0 15px 15px 0 rgba(47, 83, 151, 0.1);
+}
+
+.inputBox {
+  max-width: 70px;
+  margin-left: 74px;
+  border-radius: 0%;
+}
+.buttonRemove {
+  padding: 10px 60px !important;
+  margin-top: 65px;
+  margin-bottom: 20px;
+}
+.buttonAdd {
+  padding: 10px 40px !important;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+.name {
+  font-size: 2em;
+}
+
+.itemBrand {
+  font-size: 1em;
+  color: #747474;
+}
+
+.profile-box {
+  box-shadow: 0 2px 6px 0 rgba(47, 83, 151, 0.1);
+  width: 220px;
+  height: 400px;
+  transition: 300ms;
+  flex-grow: 1;
+  padding-top: 3vh;
+}
+
+.profile-box:hover {
+  box-shadow: 0 0 20px 9px rgba(0, 0, 0, 0.03);
+}
 </style>
+

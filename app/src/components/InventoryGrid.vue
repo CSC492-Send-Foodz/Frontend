@@ -1,10 +1,13 @@
 <template>
   <div>
     <v-container>
-      <v-row justify="center" class="mx-auto" max-width="600">
-        <v-card v-for="(item, index) in getAllInventoryItems" :key="index" class="ma-2 pa-1">
-          <InventoryItem :item="item"></InventoryItem>
-        </v-card>
+      <v-row mb-5 justify="center" justify-md="start" max-width="600">
+        <InventoryItem
+          v-for="(item, index) in getAllInventoryItems"
+          :key="index"
+          class="ma-2 pa-1"
+          :item="item"
+        />
       </v-row>
     </v-container>
   </div>
