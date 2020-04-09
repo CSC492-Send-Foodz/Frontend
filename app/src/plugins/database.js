@@ -40,7 +40,6 @@ database.auth().onAuthStateChanged(async user => {
     
     if (currentUser.metadata.creationTime !== currentUser.metadata.lastSignInTime) {
       await store.dispatch("postCheckAccountType", user.uid).then(async response => {
-        console.log(response.data);
         if (response.data !== store.state.userType) {
           store.state.userType=response.data==="GroceryStores"?"Grocery Store":"Food Bank";
         }

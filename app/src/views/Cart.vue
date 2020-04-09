@@ -2,42 +2,54 @@
   <div align="center">
     <h1 class="my-6 font-weight-regular">SHOPPING CART</h1>
 
-    <v-list class="list">
-      <v-list-item-group v-model="selected" active-class="highlighted">
-        <template v-for="(item, index) in getShoppingCart">
-          <v-list-item :key="item.title">
-            <v-avatar color="primary" size="70">
-              <span class="white--text">
-                <div>{{expDateFormated(item.expirationDate, 0)}}</div>
-                <div>{{expDateFormated(item.expirationDate, 1)}}</div>
-                <div>{{expDateFormated(item.expirationDate, 2)}}</div>
-              </span>
-            </v-avatar>
+    <div v-if="getShoppingCart.length != 0">
+      <v-list class="list">
+        <v-list-item-group active-class="highlighted">
+          <template v-for="(item, index) in getShoppingCart">
+            <v-list-item :key="item.title">
+              <v-avatar color="primary" size="70">
+                <span class="white--text">
+                  <div>{{expDateFormated(item.expirationDate, 0)}}</div>
+                  <div>{{expDateFormated(item.expirationDate, 1)}}</div>
+                  <div>{{expDateFormated(item.expirationDate, 2)}}</div>
+                </span>
+              </v-avatar>
 
-            <v-container fluid>
-              <v-row no-gutters>
-                <v-col class="py-0 name h2">{{item.name}}</v-col>
-              </v-row>
-              <v-row no-gutters>
-                <v-col class="h2 py-0 itemBrand">{{item.brand}}</v-col>
-              </v-row>
-            </v-container>
-            <v-container fluid>
-              <v-row no-gutters>
-                <v-col class="py-0 quantity">Quantity: {{item.quantity}}</v-col>
-              </v-row>
-            </v-container>
+              <v-container fluid>
+                <v-row no-gutters>
+                  <v-col class="py-0 name h2">{{item.name}}</v-col>
+                </v-row>
+                <v-row no-gutters>
+                  <v-col class="h2 py-0 itemBrand">{{item.brand}}</v-col>
+                </v-row>
+              </v-container>
+              <v-container fluid>
+                <v-row no-gutters>
+                  <v-col class="py-0 quantity">Quantity: {{item.quantity}}</v-col>
+                </v-row>
+              </v-container>
 
-            <v-btn icon color="primary" @click="removeInventoryItemFromCart(index)">
-              <v-icon>clear</v-icon>
-            </v-btn>
-          </v-list-item>
+              <v-btn icon color="primary" @click="removeInventoryItemFromCart(index)">
+                <v-icon>clear</v-icon>
+              </v-btn>
+            </v-list-item>
 
-          <v-divider v-if="index + 1 < getShoppingCart.length" :key="index"></v-divider>
-        </template>
-      </v-list-item-group>
-    </v-list>
-    <v-btn tile outlined x-large class=" mb-12 btn-outline" color="primary" @click="postOrder()">Checkout</v-btn>
+            <v-divider v-if="index + 1 < getShoppingCart.length" :key="index"></v-divider>
+          </template>
+        </v-list-item-group>
+      </v-list>
+      <v-btn
+        tile
+        outlined
+        x-large
+        class="mb-12 btn-outline"
+        color="primary"
+        @click="postOrder()"
+      >Checkout</v-btn>
+    </div>
+    <div v-else >
+      <h2 class="empty font-weight-regular">EMPTY</h2>
+    </div>
 
     <!-- <v-dialog v-model="checkoutError" max-width="400">
       <v-card>
@@ -127,6 +139,11 @@ export default {
 }
 .name {
   font-size: 2em;
+}
+
+.empty {
+  margin-top: 30vh;
+  color: #747474;
 }
 
 .quantity {

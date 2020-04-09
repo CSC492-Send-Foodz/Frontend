@@ -36,6 +36,7 @@ var store = new Vuex.Store({
 		getAllGroceryStores: (state) => {
 			return state.groceryStores
 		},
+		
 		getActiveOrders: (state) => {
 			return state.activeOrders
 		},
