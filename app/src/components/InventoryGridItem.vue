@@ -5,8 +5,8 @@
       <v-avatar class="expireDate" py-12 color="primary" size="100">
         <span class="white--text">
           <div>{{expDateFormated[0]}}</div>
+          <div>{{expDateFormated[1]}}</div>
           <div>{{expDateFormated[2]}}</div>
-          <div>{{expDateFormated[3]}}</div>
         </span>
       </v-avatar>
       <div class="pt-5 pb-2 name">{{name}}</div>
@@ -89,7 +89,7 @@ export default {
     },
     expDateFormated() {
       return moment(String(this.expirationDate))
-        .format("MMM  D YYYY")
+        .format("MMM D YYYY")
         .toUpperCase()
         .split(" ");
     }

@@ -1,33 +1,45 @@
 <template>
-  <div class="justify-center">
-    <div v-if="getShoppingCart.length == 0">Empty Cart</div>
-    <div v-else>
-      <v-list three-line>
+  <div align="center">
+    <h1 class="my-6 font-weight-regular">SHOPPING CART</h1>
+
+    <v-list class="list">
+      <v-list-item-group v-model="selected" active-class="highlighted">
         <template v-for="(item, index) in getShoppingCart">
           <v-list-item :key="item.title">
-            <template v-slot:default="{}">
-              <v-list-item-content>
-                <v-list-item-title v-text="item.name"></v-list-item-title>
-                <v-list-item-subtitle class="text--primary" v-text="item.brand"></v-list-item-subtitle>
-                <v-list-item-subtitle v-text="item.quantity"></v-list-item-subtitle>
-              </v-list-item-content>
+            <v-avatar color="primary" size="70">
+              <span class="white--text">
+                <div>{{expDateFormated(item.expirationDate, 0)}}</div>
+                <div>{{expDateFormated(item.expirationDate, 1)}}</div>
+                <div>{{expDateFormated(item.expirationDate, 2)}}</div>
+              </span>
+            </v-avatar>
 
-              <v-list-item-action>
-                <v-btn @click="removeInventoryItemFromCart(index)">
-                  <v-icon>delete</v-icon>
-                </v-btn>
-              </v-list-item-action>
-            </template>
+            <v-container fluid>
+              <v-row no-gutters>
+                <v-col class="py-0 name h2">{{item.name}}</v-col>
+              </v-row>
+              <v-row no-gutters>
+                <v-col class="h2 py-0 itemBrand">{{item.brand}}</v-col>
+              </v-row>
+            </v-container>
+            <v-container fluid>
+              <v-row no-gutters>
+                <v-col class="py-0 quantity">Quantity: {{item.quantity}}</v-col>
+              </v-row>
+            </v-container>
+
+            <v-btn icon color="primary" @click="removeInventoryItemFromCart(index)">
+              <v-icon>clear</v-icon>
+            </v-btn>
           </v-list-item>
 
           <v-divider v-if="index + 1 < getShoppingCart.length" :key="index"></v-divider>
         </template>
-      </v-list>
-      <v-btn>
-        <v-btn text @click="postOrder()">Checkout</v-btn>
-      </v-btn>
-    </div>
-    <v-dialog v-model="checkoutError" max-width="400">
+      </v-list-item-group>
+    </v-list>
+    <v-btn tile outlined x-large class=" mb-12 btn-outline" color="primary" @click="postOrder()">Checkout</v-btn>
+
+    <!-- <v-dialog v-model="checkoutError" max-width="400">
       <v-card>
         <v-card-title class="headline white">Sorry, They're Out of Stock</v-card-title>
         <v-divider></v-divider>
@@ -61,17 +73,21 @@
           <v-btn color="black" text @click="setShowSuccessfullOrderPlace(false)">Ok</v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
+    </v-dialog>-->
   </div>
 </template>
 
 
 <script>
 import { mapGetters, mapMutations, mapActions } from "vuex";
-
+import moment from "moment";
 export default {
   computed: {
-    ...mapGetters(["getShoppingCart", "getShowCheckoutError", "getShowSuccessfullOrderPlace"]),
+    ...mapGetters([
+      "getShoppingCart",
+      "getShowCheckoutError",
+      "getShowSuccessfullOrderPlace"
+    ]),
     checkoutError: {
       set(hasError) {
         this.setShowCheckoutError(hasError);
@@ -90,8 +106,42 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(["removeInventoryItemFromCart", "setShowCheckoutError", "setShowSuccessfullOrderPlace"]),
-    ...mapActions(["postOrder"])
+    ...mapMutations([
+      "removeInventoryItemFromCart",
+      "setShowCheckoutError",
+      "setShowSuccessfullOrderPlace"
+    ]),
+    ...mapActions(["postOrder"]),
+    expDateFormated(date, index) {
+      return moment(String(date))
+        .format("MMM D YYYY")
+        .toUpperCase()
+        .split(" ")[index];
+    }
   }
 };
 </script>
+<style>
+.list {
+  max-width: 80vw;
+}
+.name {
+  font-size: 2em;
+}
+
+.quantity {
+  font-size: 1.5em;
+  color: #747474;
+}
+
+.itemBrand {
+  font-size: 1em;
+  color: #747474;
+}
+.h2 {
+  text-align: justify;
+}
+.btn-outline {
+  border-color: #ebebeb;
+}
+</style>
