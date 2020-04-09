@@ -160,6 +160,7 @@ var store = new Vuex.Store({
 								expirationDate: resultData[5]
 							})
 						})
+						
 						axios.post(BASE_URL + "/groceryStore/updateInventory", {
 							groceryStoreId: context.state.id,
 							ediOrderNumber: "124AZ",
