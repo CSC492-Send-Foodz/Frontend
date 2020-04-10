@@ -104,7 +104,7 @@ export default {
 
 <style>
 #app {
-  font-family: Product Sans;
+  font-family: 'Open Sans';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

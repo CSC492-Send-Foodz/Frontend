@@ -26,10 +26,8 @@ database.auth().onAuthStateChanged(async user => {
   
   if (user) {
     var currentUser = firebase.auth().currentUser;
-    console.log("currentUser", currentUser)
     await currentUser.getIdToken(true)
       .then(async token => {
-        console.log("token", token)
         store.state.token = token;
         var date = new Date();
         date.setHours(date.getHours() + 1);

@@ -55,7 +55,6 @@
             <div v-show="message!==''" style="color:red">{{message}}</div>
             <v-flex mb-10 class="text-xs-center" mt-5>
               <v-btn
-                
                 tile
                 outlined
                 x-large
@@ -133,10 +132,15 @@ export default {
         this.message = "Passwords Do Not Match";
       } else {
         this.setUserType(this.userType);
-        this.message = await firebase.signup(
+        var response = await firebase.signup(
           event.target.email.value,
           event.target.password.value
         );
+        if (
+          "The email address is already in use by another account." == response
+        ) {
+          this.message = response;
+        }
       }
       this.inProgress = false;
     });
