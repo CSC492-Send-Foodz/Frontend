@@ -26,8 +26,10 @@ database.auth().onAuthStateChanged(async user => {
   
   if (user) {
     var currentUser = firebase.auth().currentUser;
+    console.log("currentUser", currentUser)
     await currentUser.getIdToken(true)
       .then(async token => {
+        console.log("token", token)
         store.state.token = token;
         var date = new Date();
         date.setHours(date.getHours() + 1);
@@ -44,12 +46,14 @@ database.auth().onAuthStateChanged(async user => {
           store.state.userType=response.data==="GroceryStores"?"Grocery Store":"Food Bank";
         }
       }).catch(error => {
-        console.log(error);
+        console.log(error)
+        store.state.loadingInProgress = false;
         signout();
       });
     }
 
     if (router.currentRoute.name === "login"||router.currentRoute.name==="signup") {
+      store.state.loadingInProgress = false;
       router.push(store.state.userType === "Grocery Store" ? {name:"inventory",params:{id:user.uid}} : {name:"availableGroceryStores"});
     }
   } else {
@@ -65,6 +69,7 @@ database.auth().onAuthStateChanged(async user => {
 		store.state.showPopupStartNewShoppingCart = false;
 		store.state.showCheckoutError = false;
     store.state.showSuccessfullOrderPlace = false;
+    store.state.loadingInProgress = false;
     
     if (router.currentRoute.name !== "login") {
       router.push({ name: "login" });

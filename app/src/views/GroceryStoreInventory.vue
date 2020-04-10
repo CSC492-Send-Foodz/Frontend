@@ -16,7 +16,7 @@
       <input ref="uploader" class="d-none" type="file" accept=".csv" @change="handleFileUpload" />
     </div>
 
-    <!-- <v-dialog persistent v-model="getShowPopupStartNewShoppingCart" max-width="400">
+    <v-dialog persistent v-model="getShowPopupStartNewShoppingCart" max-width="400">
       <v-card>
         <v-card-title class="headline white">One At A Time</v-card-title>
         <v-divider></v-divider>
@@ -39,7 +39,7 @@
           <v-btn color="black" text @click="closePopUp(false)">Go Back</v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>-->
+    </v-dialog>
 
     <InventoryGrid />
   </div>
