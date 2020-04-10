@@ -194,7 +194,6 @@ var store = new Vuex.Store({
 				inventory: context.state.shoppingCart
 			}).then(function (response) {
 				context.state.loadingInProgress = false;
-				console.log(response)
 				if (response.status == 200) {
 					if (response.data.status === "Order is unable to completed") {
 						context.state.showCheckoutError = true
