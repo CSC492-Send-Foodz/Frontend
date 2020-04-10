@@ -29,7 +29,7 @@
               </v-badge>
             </v-tab>
 
-            <v-tab v-if="getId!==''" @click="logout">Logout</v-tab>
+            <v-tab v-if="getId!=='' && !getloadingInProgress" @click="logout">Logout</v-tab>
           </v-tabs>
         </v-col>
       </v-row>
@@ -66,7 +66,8 @@ export default {
       getUserType: "getUserType",
       getId: "getId",
       getEmail: "getEmail",
-      getOrderFromGroceryStore: "getOrderFromGroceryStore"
+      getOrderFromGroceryStore: "getOrderFromGroceryStore",
+      getloadingInProgress: "getloadingInProgress"
     }),
 
     groceryStoreTabs: function() {

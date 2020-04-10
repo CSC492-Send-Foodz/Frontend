@@ -110,6 +110,7 @@ export default {
       }
 
       if (this.getShoppingCartGroceryStoreId == this.groceryStoreId) {
+        
         this.addInventoryItemToCart({
           groceryStoreId: this.groceryStoreId,
           item: this.item,

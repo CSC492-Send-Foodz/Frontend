@@ -26,7 +26,7 @@
                 class="btn-outline"
                 color="primary"
                 type="submit"
-                :loading="inProgress"
+                :loading="getloadingInProgress"
               >Log In</v-btn>
             </v-flex>
           </v-layout>
@@ -38,17 +38,24 @@
 <script>
 import firebase from "../plugins/database";
 
+import { mapGetters, mapMutations } from "vuex";
 export default {
   data() {
     return {
       message: "",
-      inProgress: false
     };
   },
+  computed: {
+    ...mapGetters(["getloadingInProgress"])
+  },
+  methods: {
+    ...mapMutations(["setloadingInProgress"])
+  },
+
   mounted() {
     document.forms["login"].addEventListener("submit", async event => {
       event.preventDefault();
-      this.inProgress = true;
+      this.setloadingInProgress(true);
       var res = await firebase.signin(
         event.target.email.value,
         event.target.password.value
@@ -56,7 +63,6 @@ export default {
       if (res !== undefined && !res.startsWith("{")) {
         this.message = res;
       }
-      this.inProgress = false;
     });
   }
 };

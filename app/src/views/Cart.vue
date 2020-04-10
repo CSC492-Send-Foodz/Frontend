@@ -45,6 +45,7 @@
         class="mb-12 btn-outline"
         color="primary"
         @click="postOrder()"
+        :loading="getloadingInProgress"
       >Checkout</v-btn>
     </div>
     <div v-else >
@@ -98,7 +99,8 @@ export default {
     ...mapGetters([
       "getShoppingCart",
       "getShowCheckoutError",
-      "getShowSuccessfullOrderPlace"
+      "getShowSuccessfullOrderPlace",
+      "getloadingInProgress"
     ]),
     checkoutError: {
       set(hasError) {

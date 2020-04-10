@@ -22,6 +22,7 @@ var store = new Vuex.Store({
 		activeOrders: [],
 		userType: "",
 		shoppingCart: [],
+		loadingInProgress: false,
 		shoppingCartGroceryStoreId: "",
 		showPopupStartNewShoppingCart: false,
 		showCheckoutError: false,
@@ -70,6 +71,9 @@ var store = new Vuex.Store({
 		getShowSuccessfullOrderPlace: (state) => {
 			return state.showSuccessfullOrderPlace
 		},
+		getloadingInProgress: (state) => {
+			return state.loadingInProgress
+		},
 	},
 
 	mutations: {
@@ -95,6 +99,10 @@ var store = new Vuex.Store({
 		setShowSuccessfullOrderPlace: (state, showSuccessfullOrderPlace) => {
 			state.showSuccessfullOrderPlace = showSuccessfullOrderPlace;
 		},
+		setloadingInProgress: (state, isloadingInProgress) => {
+			state.loadingInProgress = isloadingInProgress;
+		},
+
 		addInventoryItemToCart: (state, payload) => {
 			if (payload.quantity > 0) {
 				payload.item.quantity = payload.quantity
@@ -108,6 +116,7 @@ var store = new Vuex.Store({
 			state.shoppingCart.splice(index, 1)
 		},
 		clearShoppingCart: (state) => {
+			state.shoppingCartGroceryStoreId = ""
 			state.shoppingCart = []
 		},
 	},
@@ -141,8 +150,6 @@ var store = new Vuex.Store({
 			axios.post(BASE_URL + "/order/statusUpdate", {
 				id: payload.id,
 				status: payload.status
-			}).catch(error => {
-				console.log(error.response);
 			})
 		}),
 
@@ -166,8 +173,6 @@ var store = new Vuex.Store({
 							groceryStoreId: context.state.id,
 							ediOrderNumber: "124AZ",
 							inventory: items
-						}).catch(error => {
-							console.log(error.response);
 						})
 					}
 				});
@@ -177,18 +182,19 @@ var store = new Vuex.Store({
 			axios.post(BASE_URL + "/groceryStore/removeInventoryItem", {
 				groceryStoreId: payload.groceryStoreId,
 				id: payload.id
-			}).catch(error => {
-				console.log(error.response);
 			})
 		},
 
 		postOrder(context) {
+			context.state.loadingInProgress = true;
 			axios.post(BASE_URL + "/foodBank/placeOrder", {
 				status: "Looking For Driver",
 				groceryStoreId: context.state.shoppingCartGroceryStoreId,
 				foodBankId: context.state.id,
 				inventory: context.state.shoppingCart
 			}).then(function (response) {
+				context.state.loadingInProgress = false;
+				console.log(response)
 				if (response.status == 200) {
 					if (response.data.status === "Order is unable to completed") {
 						context.state.showCheckoutError = true
