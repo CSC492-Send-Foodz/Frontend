@@ -159,21 +159,23 @@ var store = new Vuex.Store({
 					complete: function (results) {
 						var items = []
 						results.data.forEach(resultData => {
-							items.push({
-								id: resultData[0],
-								name: resultData[1],
-								brand: resultData[2],
-								groceryStoreId: context.state.id,
-								quantity: resultData[4],
-								expirationDate: resultData[5]
-							})
+							if (resultData[0] !== "") {
+								items.push({
+									id: resultData[0],
+									name: resultData[1],
+									brand: resultData[2],
+									groceryStoreId: context.state.id,	
+									quantity: resultData[4],
+									expirationDate: resultData[5]
+								})
+							}
 						})
-						
+					
 						axios.post(BASE_URL + "/groceryStore/updateInventory", {
 							groceryStoreId: context.state.id,
 							ediOrderNumber: "124AZ",
 							inventory: items
-						})
+						}).then(red => { console.log(red) }).catch(err => console.log(err))
 					}
 				});
 			}
